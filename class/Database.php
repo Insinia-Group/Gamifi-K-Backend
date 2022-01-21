@@ -2,10 +2,7 @@
 
 class Database {
     /* CONSTRUCTOR */
-    function __construct()
-    {
-        
-    }
+    function __construct(){}
 
     public function connection() {
         require 'configuration.php';
