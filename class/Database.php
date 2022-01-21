@@ -1,17 +1,30 @@
 <?php
 
 class Database {
+    public $mysql;
+
     /* CONSTRUCTOR */
     function __construct(){}
 
-    public function connection() {
+    /* METHODs */
+    /**
+     * connection - Inicializa la conexón.
+     *
+     * @param void vacío.
+     *
+     */
+    public function connection() 
+    {
         require 'configuration.php';
-        echo getenv('DB_HOST').' '.getenv('DB_USERNAME').' '.getenv('DB_PASSWORD').' '.getenv('DB_DATABASE');
-        $mysql = new mysqli(getenv('DB_HOST'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'), getenv('DB_DATABASE'));
-        $mysql -> set_charset("utf8");
-        $res = $mysql -> query("SELECT * FROM test");
-        while($f = $res->fetch_object()){
-            echo $f->nombre.' <br/>';
+        define("DB_HOST", getenv('DB_HOST'));
+        define("DB_USERNAME", getenv('DB_USERNAME'));
+        define("DB_PASSWORD", getenv('DB_PASSWORD'));
+        define("DB_DATABASE", getenv('DB_DATABASE'));
+        $this -> mysql = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
+        $this -> mysql -> set_charset("utf8");
+        $result = $this -> $mysql -> query("SELECT * FROM test");
+        while($fetched = $result -> fetch_object()){
+            echo $fetched -> nombre.'<br/>';
         }
     }
 }
