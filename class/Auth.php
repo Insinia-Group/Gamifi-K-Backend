@@ -7,7 +7,7 @@ use Firebase\JWT\Key;
     private static $secret;
 
     function __construct() {
-        self::$secret = getenv('DB_HOST');;
+        self::$secret = getenv('JWT_TOKEN_SECRET');;
     }
 
     public static function createEncodedToken($data)
