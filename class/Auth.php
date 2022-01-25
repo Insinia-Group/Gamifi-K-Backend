@@ -7,23 +7,25 @@ use Firebase\JWT\Key;
     private static $secret;
 
     function __construct() {
-        self::$secret = getenv('JWT_TOKEN_SECRET');;
+        self::$secret = getenv('JWT_TOKEN_SECRET');
     }
 
-    public static function createEncodedToken($data)
+    public static function decodeToken($token)
+    {
+        return JWT::decode($token, new Key(self::$secret, 'HS256'));
+    }
+
+    public static function SignIn($data) 
     {
         $time = time();
+
         $token = array(
             'exp' => $time + (60*60),
             'aud' => self::Aud(),
             'data' => $data
         );
+        echo self::$secret.'<br>';
         return JWT::encode($token, self::$secret, 'HS256');
-    }
-
-    public static function getDecodedToken($token) 
-    {
-        return JWT::decode($token, self::$secret, 'HS256');
     }
 
     private static function Aud()
