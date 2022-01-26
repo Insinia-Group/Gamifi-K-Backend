@@ -1,19 +1,16 @@
 <?php 
-    require 'class/Database.php';
-    require 'class/Auth.php';
     require 'configuration.php';
-    // $test = new Database();
-    // $test -> connection();
-    
     $usuario  = 'eduardo';
     $password = '123456';
     if($usuario === 'eduardo' && $password === '123456')
     {
-        echo $a = Auth::SignIn([
-            'id' => 1,
-            'name' => 'Edu'
+        $a = Auth::signIn([
+            'id' => 2,
+            'name' => '3'
         ]);
 
+        $b = Auth::decodeToken($a);
+        print_r($b);
     }
 
 ?>
