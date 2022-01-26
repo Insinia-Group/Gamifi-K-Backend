@@ -2,6 +2,7 @@
     "require": {
         "symfony/dotenv": "^3.4",
         "firebase/php-jwt": "^6.0",
-        "symfony/routing": "^6.0"
+        "symfony/routing": "^6.0",
+        "nikic/fast-route": "^1.3"
     }
 }
