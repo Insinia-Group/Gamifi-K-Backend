@@ -20,7 +20,7 @@ use Firebase\JWT\Key;
         $time = time();
 
         $token = array(
-            'exp' => $time + (60*60),
+            'exp' => $time + (60 * 60 * 24 * 1),
             'aud' => self::Aud(),
             'data' => $data
         );
