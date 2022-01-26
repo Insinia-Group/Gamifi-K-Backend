@@ -15,7 +15,7 @@ class Database {
      */
     public function connection() 
     {
-        require 'configuration.php';
+        include_once('configuration.php');
         define("DB_HOST", getenv('DB_HOST'));
         define("DB_USERNAME", getenv('DB_USERNAME'));
         define("DB_PASSWORD", getenv('DB_PASSWORD'));
@@ -24,10 +24,18 @@ class Database {
             $this -> mysql = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
             if ($this -> mysql -> connect_errno) {
                 exit();
-            };
+            }
         } catch (Exception $error) {
             return $error;
         };
+    }
+
+    public function getTest()
+    {
+        $test = $this -> mysql -> query('Select * FROM test');
+        while ($row = $test->fetch_assoc()) {
+            echo $row['testNum'] .' '. $row['testString'].'<br>';
+        }
     }
 }
 
