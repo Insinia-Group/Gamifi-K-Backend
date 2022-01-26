@@ -1,5 +1,5 @@
 <?php 
-    require 'configuration.php';
+    include_once('configuration.php');
     $usuario  = 'eduardo';
     $password = '123456';
     if($usuario === 'eduardo' && $password === '123456')
