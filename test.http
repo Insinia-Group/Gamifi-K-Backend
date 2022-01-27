@@ -1,0 +1,7 @@
+POST http://localhost:3000/login
+
+{"email": "test@asd.com","password": "123"}
+
+###
+
+GET http://localhost:3000/
