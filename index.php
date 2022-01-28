@@ -7,19 +7,23 @@
     include_once('class/Database.php');
     include_once('class/Router.php');
     include_once('class/Auth.php');
-    $database = new Database();
-    $database -> connection();
 
     $router = new Router(new Request);
 
+    /* GETs */
     $router->get('/', function($request) {
-        return 'Estas en /';
+        return 'Estas en 123';
     });
 
-    $router->get('/status', function($request) {
+    $router->get('/usuario/:id', function($request) {
         return json_encode("{status: true}");
     });
 
+    $router->get('/status', function($request) {
+        return json_encode("{status: asd}");
+    });
+
+    /* POSTs */
     $router->post('/register', function($request) {
         $body = $request -> getJSON();
         $userData = array();
