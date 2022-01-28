@@ -31,6 +31,20 @@ class Request implements IRequest
     return $result;
   }
 
+  public function getJSON()
+  {
+    if($this->requestMethod === "GET")
+    {
+      return;
+    }
+
+    if ($this->requestMethod == "POST")
+    {
+      $inputJSON = file_get_contents('php://input');
+      return $inputJSON;
+    }
+  }
+
   public function getBody()
   {
     if($this->requestMethod === "GET")
