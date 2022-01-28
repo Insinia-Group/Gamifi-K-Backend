@@ -1,4 +1,7 @@
 <?php 
+    header('Access-Control-Allow-Origin: *');
+    header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
     include_once('configuration.php');
     include_once('class/Request.php');
     include_once('class/Database.php');
@@ -13,12 +16,16 @@
         return 'Estas en /';
     });
 
+    $router->get('/status', function($request) {
+        return json_encode("{status: true}");
+    });
+
     $router->post('/register', function($request) {
         $body = $request -> getJSON();
         $userData = array();
         $userData['email'] = json_decode($body, TRUE)['email'];
 
-        return json_encode(json_decode($body, TRUE));
+        return json_decode($body, TRUE);
     });
 
     $router->post('/login', function($request) {
