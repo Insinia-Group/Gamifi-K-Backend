@@ -11,6 +11,13 @@
     $router = new Router(new Request);
 
     /* GETs */
+     $router->get('/usuarios', function($request) {
+         $database = new  Database();
+         $database->connection();
+
+        return json_encode($database->getUsers());
+    });
+
     $router->get('/', function($request) {
         return 'Estas en 123';
     });

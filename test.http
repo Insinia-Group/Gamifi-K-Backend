@@ -5,3 +5,7 @@ POST http://localhost:3000/login
 ###
 
 GET http://localhost:3000/status
+
+###
+
+GET http://localhost:3000/usuarios

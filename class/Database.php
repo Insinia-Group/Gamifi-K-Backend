@@ -40,6 +40,17 @@ class Database {
             echo $row['testNum'] .' '. $row['testString'].'<br>';
         }
     }
+
+     public function getUsers()
+    {
+        $test = $this -> mysql -> query('Select * FROM User');
+        $response = [];
+        while ($row = $test->fetch_assoc()) {
+          array_push($response, $row);
+            
+    }
+         return $response;
+    }
 }
 
 ?>
