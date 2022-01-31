@@ -3,9 +3,6 @@
 class Database {
     public $mysql;
 
-    /* CONSTRUCTOR */
-    function __construct(){}
-
     /* METHODs */
     /**
      * connection - Inicializa la conexón.
@@ -30,6 +27,12 @@ class Database {
         };
     }
 
+     /**
+     * getTest - Printa la tabla test de la BBDD.
+     *
+     * @param void vacío.
+     *
+     */
     public function getTest()
     {
         $test = $this -> mysql -> query('Select * FROM test');
