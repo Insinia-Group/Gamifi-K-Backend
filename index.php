@@ -20,7 +20,10 @@
     });
 
     $router->get('/status', function($request) {
-        return json_encode("{status: asd}");
+        $database = new Database();
+        $status = new stdClass();
+        $status -> status = true;
+        return json_encode($status);
     });
 
     /* POSTs */
