@@ -1,5 +1,5 @@
 <?php
-
+include_once('configuration.php');
 class Database {
     public $mysql;
 
@@ -41,15 +41,14 @@ class Database {
         }
     }
 
-     public function getUsers()
+    public function getUsers()
     {
         $test = $this -> mysql -> query('Select * FROM User');
         $response = [];
         while ($row = $test->fetch_assoc()) {
           array_push($response, $row);
-            
-    }
-         return $response;
+        }
+        return $response;
     }
 }
 

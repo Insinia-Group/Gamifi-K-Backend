@@ -4,7 +4,7 @@ POST http://localhost:3000/login
 
 ###
 
-POST http://localhost:3000/status
+GET http://localhost:3000/status
 
 [{"email": "test@asd.com" ,"password": "123"}, {"email": "paco@asd.com" ,"password": "123"}]
 
