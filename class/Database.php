@@ -27,6 +27,21 @@ class Database {
         };
     }
 
+    public function login($email, $password)
+    {
+        try {
+            $query = $this -> mysql -> prepare('SELECT `id`, `email`, `password` FROM User WHERE email = ?');
+            $query -> bind_param('s', $email);
+            $query -> execute();
+            $result = $query -> get_result();
+            $row = $result -> fetch_array(MYSQLI_ASSOC);
+            $verificationPassword = password_verify($password, $row['password']);
+            echo $verificationPassword;
+        } catch (Exception $error) {
+            return $error;
+        }
+    }
+
      /**
      * getTest - Printa la tabla test de la BBDD.
      *
