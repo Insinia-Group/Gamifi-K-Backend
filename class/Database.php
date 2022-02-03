@@ -6,9 +6,6 @@ class Database {
     /* METHODs */
     /**
      * connection - Inicializa la conexón.
-     *
-     * @param void vacío.
-     *
      */
     public function connection() 
     {
@@ -27,6 +24,13 @@ class Database {
         };
     }
 
+    /**
+     * login - Verifica el email y password para devolver un JWT.
+     *
+     * @param email string.
+     * @param password string.
+     *
+     */
     public function login($email, $password)
     {
         try {
@@ -35,18 +39,31 @@ class Database {
             $query -> execute();
             $result = $query -> get_result();
             $row = $result -> fetch_array(MYSQLI_ASSOC);
-            $verificationPassword = password_verify($password, $row['password']);
-            echo $verificationPassword;
+            if (password_verify($password, $row['password'])) {
+                include_once('class/Auth.php');
+                $response = new stdClass();
+                $response -> token = 'BEARER ' . AUTH::login(array($row['email']));;
+                return $response;
+            } else {
+                header("HTTP/1.1 404 Not Found");
+                return $this -> responseError(403, 'Email or password incorrect');
+            }
         } catch (Exception $error) {
             return $error;
         }
     }
 
+    public function responseError($status, $message) {
+        $response = new stdClass();
+        $response -> status = $status;
+        $response -> message = $message;
+        $response -> autentication = false;
+        $response -> authorization = false;
+        return $response;
+    }
+
      /**
      * getTest - Printa la tabla test de la BBDD.
-     *
-     * @param void vacío.
-     *
      */
     public function getTest()
     {
@@ -56,6 +73,9 @@ class Database {
         }
     }
 
+     /**
+     * getTest - Printa la tabla test de la BBDD.
+     */
     public function getUsers()
     {
         $test = $this -> mysql -> query('Select * FROM User');
