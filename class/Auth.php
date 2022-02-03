@@ -13,7 +13,7 @@
             return JWT::decode($token, new Key(self::secret(), 'HS256'));
         }
 
-        public static function signIn($data) 
+        public static function login($data) 
         {
             $time = time();
             $token = array(
