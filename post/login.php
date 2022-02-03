@@ -3,5 +3,5 @@
     $validation = parse();
     $database = new Database();
     $database -> connection();
-    $database -> login($validation -> email, $validation -> password);
-    
+    $response = $database -> login($validation -> email, $validation -> password);
+    print_r(json_encode($response));
