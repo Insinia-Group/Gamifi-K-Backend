@@ -4,10 +4,14 @@ POST http://localhost:3000/login
 
 ###
 
-GET http://localhost:3000/status
+POST http://localhost:3000/signup
 
-[{"email": "test@asd.com" ,"password": "123"}, {"email": "paco@asd.com" ,"password": "123"}]
+{"email": "test@asd.com", "password": "123"}
 
 ###
 
-GET http://localhost:3000/usuarios
+GET http://localhost:3000/status
+
+###
+
+GET http://localhost:3000/users

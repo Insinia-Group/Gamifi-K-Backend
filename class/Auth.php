@@ -3,11 +3,6 @@
     use Firebase\JWT\Key;
     
     class Auth {
-        private static function secret()
-        {
-            return getenv('JWT_TOKEN_SECRET');
-        }
-
         public static function decodeToken($token)
         {
             return JWT::decode($token, new Key(self::secret(), 'HS256'));
@@ -22,6 +17,21 @@
                 'data' => $data
             );
             return JWT::encode($token, self::secret(), 'HS256');
+        }
+
+        public static function isExpired($token)
+        {
+            $decoded = self::decodeToken($token);
+            if ($decoded -> exp > time()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        private static function secret()
+        {
+            return getenv('JWT_TOKEN_SECRET');
         }
 
         private static function Aud()

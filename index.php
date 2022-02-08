@@ -6,7 +6,9 @@
 
     /* GETs */
     get('/status', 'get/status.php');
+    get('/users', 'get/users.php');
 
     /* POSTs */
     post('/login', 'post/login.php');
+    post('/singup', 'post/signup.php');
 ?>

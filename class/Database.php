@@ -1,6 +1,7 @@
 <?php
-include_once('configuration.php');
+
 class Database {
+    /* ATTRIBUTs */
     public $mysql;
 
     /* METHODs */
@@ -45,7 +46,6 @@ class Database {
                 $response -> token = 'BEARER ' . AUTH::login(array($row['email']));;
                 return $response;
             } else {
-                header("HTTP/1.1 404 Not Found");
                 return $this -> responseError(403, 'Email or password incorrect');
             }
         } catch (Exception $error) {
@@ -53,7 +53,15 @@ class Database {
         }
     }
 
-    public function responseError($status, $message) {
+    /**
+     * responseError - Crea una instancia de la clase stdClass y devuelve un objeto con dos atributos.
+     *
+     * @param status string.
+     * @param message string.
+     *
+     */
+    public function responseError($status, $message) 
+    {
         $response = new stdClass();
         $response -> status = $status;
         $response -> message = $message;
@@ -62,18 +70,23 @@ class Database {
         return $response;
     }
 
-     /**
+    /**
      * getTest - Printa la tabla test de la BBDD.
      */
-    public function getTest()
+    public function status()
     {
-        $test = $this -> mysql -> query('Select * FROM test');
-        while ($row = $test->fetch_assoc()) {
-            echo $row['testNum'] .' '. $row['testString'].'<br>';
+        $response = new stdClass();
+        $test = $this -> mysql -> query('SELECT * FROM `test` WHERE testNum = 99');
+        $row = $test->fetch_assoc();
+        if (count($row) > 0 && $row['testString'] == true) {
+            $response -> status = true;
+        } else {
+            $response -> status = false;
         }
+        return $response;
     }
 
-     /**
+    /**
      * getTest - Printa la tabla test de la BBDD.
      */
     public function getUsers()
