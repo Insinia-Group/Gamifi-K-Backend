@@ -26,34 +26,6 @@ class Database {
     }
 
     /**
-     * login - Verifica el email y password para devolver un JWT.
-     *
-     * @param email string.
-     * @param password string.
-     *
-     */
-    public function login($email, $password)
-    {
-        try {
-            $query = $this -> mysql -> prepare('SELECT `id`, `email`, `password` FROM User WHERE email = ?');
-            $query -> bind_param('s', $email);
-            $query -> execute();
-            $result = $query -> get_result();
-            $row = $result -> fetch_array(MYSQLI_ASSOC);
-            if (password_verify($password, $row['password'])) {
-                include_once('class/Auth.php');
-                $response = new stdClass();
-                $response -> token = 'BEARER ' . AUTH::login(array($row['email']));;
-                return $response;
-            } else {
-                return $this -> responseError(403, 'Email or password incorrect');
-            }
-        } catch (Exception $error) {
-            return $error;
-        }
-    }
-
-    /**
      * responseError - Crea una instancia de la clase stdClass y devuelve un objeto con dos atributos.
      *
      * @param status string.
@@ -85,6 +57,34 @@ class Database {
         }
         return $response;
     }
+    
+    /**
+     * login - Verifica el email y password para devolver un JWT.
+     *
+     * @param email string.
+     * @param password string.
+     *
+     */
+    public function login($email, $password)
+    {
+        try {
+            $query = $this -> mysql -> prepare('SELECT `id`, `email`, `password` FROM User WHERE email = ?');
+            $query -> bind_param('s', $email);
+            $query -> execute();
+            $result = $query -> get_result();
+            $row = $result -> fetch_array(MYSQLI_ASSOC);
+            if (password_verify($password, $row['password'])) {
+                include_once('class/Auth.php');
+                $response = new stdClass();
+                $response -> token = 'BEARER ' . AUTH::login(array($row['email']));;
+                return $response;
+            } else {
+                return $this -> responseError(403, 'Email or password incorrect');
+            }
+        } catch (Exception $error) {
+            return $error;
+        }
+    }
 
     /**
      * getTest - Printa la tabla test de la BBDD.
@@ -97,6 +97,23 @@ class Database {
           array_push($response, $row);
         }
         return $response;
+    }
+
+    /**
+     * isAdmin() - Recibe el token desencriptado y mira si el usuario del token tiene rol de Administrador.
+     * @param tokenDecoded string.
+     */
+    public function isAdmin($email) {
+        $query = $this -> mysql -> prepare('SELECT `role` FROM User WHERE `email` = ?');
+        $query -> bind_param('s', $email);
+        $query -> execute();
+        $result = $query -> get_result();
+        $row = $result -> fetch_array(MYSQLI_ASSOC);
+        if ($row['role'] === 'admin') {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 

@@ -1,6 +1,6 @@
 POST http://localhost:3000/login
 
-{"email": "test@asd.com","password": "123"}
+{"email": "user@asd.com","password": "123"}
 
 ###
 

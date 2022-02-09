@@ -19,13 +19,12 @@
             return JWT::encode($token, self::secret(), 'HS256');
         }
 
-        public static function isExpired($token)
+        public static function isExpired($time)
         {
-            $decoded = self::decodeToken($token);
-            if ($decoded -> exp > time()) {
-                return true;
-            } else {
+            if ($time > time()) {
                 return false;
+            } else {
+                return true;
             }
         }
 
