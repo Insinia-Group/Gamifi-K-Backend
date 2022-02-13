@@ -1,12 +1,12 @@
 POST http://localhost:3000/login
 
-{"email": "user@asd.com","password": "123"}
+{"email": "user@asd.com","password": "12345678"}
 
 ###
 
-POST http://localhost:3000/signup
+POST http://localhost:3000/login
 
-{"email": "test@asd.com", "password": "123"}
+{"email": "test@asd.com", "password": "12345678"}
 
 ###
 

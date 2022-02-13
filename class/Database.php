@@ -27,10 +27,6 @@ class Database {
 
     /**
      * responseError - Crea una instancia de la clase stdClass y devuelve un objeto con dos atributos.
-     *
-     * @param status string.
-     * @param message string.
-     *
      */
     public function responseError($status, $message) 
     {
@@ -60,10 +56,6 @@ class Database {
     
     /**
      * login - Verifica el email y password para devolver un JWT.
-     *
-     * @param email string.
-     * @param password string.
-     *
      */
     public function login($email, $password)
     {
@@ -73,10 +65,11 @@ class Database {
             $query -> execute();
             $result = $query -> get_result();
             $row = $result -> fetch_array(MYSQLI_ASSOC);
-            if (password_verify($password, $row['password'])) {
+            echo array_key_exists('email', $row);
+            if (array_key_exists('email', $row) && password_verify($password, $row['password'])) {
                 include_once('class/Auth.php');
                 $response = new stdClass();
-                $response -> token = 'BEARER ' . AUTH::login(array($row['email']));;
+                $response -> token = AUTH::login(array($row['email']));;
                 return $response;
             } else {
                 return $this -> responseError(403, 'Email or password incorrect');
@@ -101,7 +94,6 @@ class Database {
 
     /**
      * isAdmin() - Recibe el token desencriptado y mira si el usuario del token tiene rol de Administrador.
-     * @param tokenDecoded string.
      */
     public function isAdmin($email) {
         $query = $this -> mysql -> prepare('SELECT `role` FROM User WHERE `email` = ?');
