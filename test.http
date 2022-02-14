@@ -13,7 +13,7 @@ POST http://localhost:3000/login
 
 POST http://localhost:3000/register
 
-{ "nick": "Firsta","userName": "Aran","lastUserName":"Soll","email": "test@asd.com","description":"Soy mugeriego", "password": "12345678","dateBirth":"1991-11-11","avatar":"sad","role":"user","dateJoined":"1991-11-11","status":"1"}
+{ "nick": "Tersaria","userName": "Bescano","lastUserName":"Soll","email": "test@asd.com","description":"Soy mugeriego", "password": "12345678","dateBirth":"1991-11-11","avatar":"sad","role":"user","dateJoined":"1991-11-11","status":"1"}
 
 ###
 
