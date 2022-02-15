@@ -65,7 +65,6 @@ class Database {
             $query -> execute();
             $result = $query -> get_result();
             $row = $result -> fetch_array(MYSQLI_ASSOC);
-            echo array_key_exists('email', $row);
             if (array_key_exists('email', $row) && password_verify($password, $row['password'])) {
                 include_once('class/Auth.php');
                 $response = new stdClass();
@@ -91,9 +90,9 @@ class Database {
     *
     *
     */
-    public function register($nick, $userName, $lastUserName, $email, $description, $password, $dateBirth, $avatar, $role, $dateJoined, $status){
+    public function register($nick, $userName, $lastUserName, $email, $description, $password, $dateBirth, $role, $dateJoined, $status){
         try {
-        $query = $this -> mysql -> prepare("INSERT INTO User ( `nick`, `name`, `lastName`, `email`, `description`, `password`, `dateBirth`, `avatar`, `role`, `dateJoined`, `status`)  VALUES ('$nick','$userName','$lastUserName','$email','$description','$password','$dateBirth','$avatar','$role','$dateJoined','$status')");
+        $query = $this -> mysql -> prepare("INSERT INTO User ( `nick`, `name`, `lastName`, `email`, `description`, `password`, `dateBirth`, `role`, `dateJoined`, `status`)  VALUES ('$nick','$userName','$lastUserName','$email','$description','$password','$dateBirth','$role','$dateJoined','$status')");
         $query -> execute();
         $result = $query -> get_result();
         }catch (Exception $error) {
