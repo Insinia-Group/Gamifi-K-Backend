@@ -4,7 +4,6 @@
     $database = new Database();
     $database -> connection();
     try {
-        
         $response = $database -> login($validation -> email, $validation -> password);
         print_r(json_encode($response));
     } catch (Exception $error) {
