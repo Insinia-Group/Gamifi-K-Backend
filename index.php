@@ -12,4 +12,5 @@
     post('/login', 'post/login.php');
     post('/singup', 'post/signup.php');
     post('/register', 'post/register.php');
+    post('/uploadAvatar', 'post/uploadAvatar.php');
 ?>
