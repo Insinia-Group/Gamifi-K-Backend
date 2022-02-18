@@ -67,9 +67,7 @@ class Database {
             $row = $result -> fetch_array(MYSQLI_ASSOC);
             if (array_key_exists('email', $row) && password_verify($password, $row['password'])) {
                 include_once('class/Auth.php');
-                $response = new stdClass();
-                $response -> token = AUTH::login(array($row['email']));;
-                return $response;
+                return AUTH::login(array($row['email']));;
             } else {
                 return $this -> responseError(403, 'Email or password incorrect');
             }
