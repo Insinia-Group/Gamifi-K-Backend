@@ -76,18 +76,9 @@ class Database {
         }
     }
 
-    /*   register - Crea usuraio en la DB 
-    *
-    * @param userName string
-    * @param lastUserName string
-    *
-    *
-    *
-    *
-    *
-    *
-    *
-    */
+    /*   
+     * register - Crea usuraio en la DB
+     */
     public function register($nick, $userName, $lastUserName, $email, $description, $password, $dateBirth, $role, $dateJoined, $status){
         try {
         $query = $this -> mysql -> prepare("INSERT INTO User ( `nick`, `name`, `lastName`, `email`, `description`, `password`, `dateBirth`, `role`, `dateJoined`, `status`)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -98,9 +89,6 @@ class Database {
             return $error;
         }
     }
-
-
-
 
     /**
      * getTest - Printa la tabla test de la BBDD.
