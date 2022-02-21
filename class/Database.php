@@ -67,9 +67,7 @@ class Database {
             $row = $result -> fetch_array(MYSQLI_ASSOC);
             if (password_verify($password, $row['password'])) {
                 include_once('class/Auth.php');
-                $response = new stdClass();
-                $response -> token = AUTH::login(array($row['email']));;
-                return $response;
+                return AUTH::login(array($row['email']));;
             } else {
                 return $this -> responseError(403, 'Email or password incorrect');
             }
@@ -78,30 +76,19 @@ class Database {
         }
     }
 
-    /*   register - Crea usuraio en la DB 
-    *
-    * @param userName string
-    * @param lastUserName string
-    *
-    *
-    *
-    *
-    *
-    *
-    *
-    */
-    public function register($nick, $userName, $lastUserName, $email, $description, $password, $dateBirth, $avatar, $role, $dateJoined, $status){
+    /*   
+     * register - Crea usuraio en la DB
+     */
+    public function register($nick, $userName, $lastUserName, $email, $description, $password, $dateBirth, $role, $dateJoined, $status){
         try {
-        $query = $this -> mysql -> prepare("INSERT INTO User ( `nick`, `name`, `lastName`, `email`, `description`, `password`, `dateBirth`, `avatar`, `role`, `dateJoined`, `status`)  VALUES ('$nick','$userName','$lastUserName','$email','$description','$password','$dateBirth','$avatar','$role','$dateJoined','$status')");
+        $query = $this -> mysql -> prepare("INSERT INTO User ( `nick`, `name`, `lastName`, `email`, `description`, `password`, `dateBirth`, `role`, `dateJoined`, `status`)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $query -> bind_param('sssssssssi',$nick,$userName,$lastUserName,$email,$description, $password, $dateBirth, $role, $dateJoined, $status);
         $query -> execute();
         $result = $query -> get_result();
         }catch (Exception $error) {
             return $error;
         }
     }
-
-
-
 
     /**
      * getTest - Printa la tabla test de la BBDD.
