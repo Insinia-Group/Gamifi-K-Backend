@@ -65,7 +65,7 @@ class Database {
             $query -> execute();
             $result = $query -> get_result();
             $row = $result -> fetch_array(MYSQLI_ASSOC);
-            if (array_key_exists('email', $row) && password_verify($password, $row['password'])) {
+            if (password_verify($password, $row['password'])) {
                 include_once('class/Auth.php');
                 return AUTH::createToken(array($row['email']));;
             } else {
