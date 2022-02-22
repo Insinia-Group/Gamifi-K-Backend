@@ -16,4 +16,3 @@
     post('/singup', 'post/signup.php');
     post('/register', 'post/register.php');
     post('/uploadAvatar', 'post/uploadAvatar.php');
-?>
