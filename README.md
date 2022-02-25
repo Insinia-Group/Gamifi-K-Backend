@@ -21,3 +21,6 @@ php -S 127.0.0.1:3001 index.php
 
 El archivo encargado de hacer los test de consultas se hace desde la extension REST Client de Visual Studio Code.
 Este archivo se llama *test.http*.
+
+### Importante
+Version de PHP 7.4.0
