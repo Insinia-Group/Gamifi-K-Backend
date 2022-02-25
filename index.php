@@ -8,9 +8,11 @@ header('Access-Control-Expose-Headers: Authorization');
 /* GETs */
 get('/status', 'get/status.php');
 get('/users', 'get/users.php');
+get('/rankings', 'get/rankings.php');
 
 /* POSTs */
 post('/login', 'post/login.php');
 post('/singup', 'post/signup.php');
 post('/register', 'post/register.php');
 post('/uploadAvatar', 'post/uploadAvatar.php');
+post('/getRankingByUser', 'post/getRankingByUser.php');

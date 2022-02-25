@@ -121,4 +121,33 @@ class Database
             return false;
         }
     }
+
+    public function getRankings()
+    {
+        $query = $this->mysql->prepare('Select * FROM Ranking');
+        $query->execute();
+        $response = [];
+        $result = $query->get_result();
+        while ($row = $result->fetch_assoc()) {
+            array_push($response, $row);
+        }
+        return $response;
+    }
+
+    public function  getRankingsById()
+    {
+    }
+
+    public function getRankingByUser($idUser)
+    {
+        $query = $this->mysql->prepare("SELECT id FROM `Ranking` WHERE id in (SELECT idRanking from RankingUser WHERE idUser = ?)");
+        $query->bind_param('i', $idUser);
+        $query->execute();
+        $response = [];
+        $result = $query->get_result();
+        while ($row = $result->fetch_assoc()) {
+            array_push($response, $row);
+        }
+        return $response;
+    }
 }

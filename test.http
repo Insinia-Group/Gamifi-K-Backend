@@ -1,6 +1,6 @@
 POST http://localhost:3000/login
 
-{"email": "user@asd.com","password": "12345678"}
+{"email": "aaa@aaa.aaa","password": "123456789"}
 
 ###
 
@@ -17,8 +17,22 @@ POST http://localhost:3000/register
 
 ###
 
+
+POST http://localhost:3000/getRankingByUser
+
+{"idUser": "18" }
+
+###
+
 GET http://localhost:3000/status
 
 ###
 
 GET http://localhost:3000/users
+
+###
+
+
+GET http://localhost:3000/rankings
+
+
