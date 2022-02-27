@@ -1,8 +1,8 @@
  <?php
     include_once('class/Database.php');
-    $validation = parse();
     $database = new Database();
     $database->connection();
+    $validation = parse();
     try {
         $response = $database->register($validation->nick, $validation->userName, $validation->lastUserName, $validation->email, $validation->description, $validation->password, $validation->dateBirth, $validation->role, $validation->dateJoined, $validation->status);
     } catch (Exception $error) {
