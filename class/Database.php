@@ -124,14 +124,16 @@ class Database
 
     public function getRankings()
     {
-        $query = $this->mysql->prepare('Select * FROM Ranking');
-        $query->execute();
+        $query = $this->mysql->query('Select * FROM Ranking');
         $response = [];
-        $result = $query->get_result();
-        while ($row = $result->fetch_assoc()) {
-            array_push($response, $row);
+        while ($row = $query->fetch_assoc()) {
+            $response = new stdClass();
+            $response -> id = $row['id'];
+            $response -> id = $row['name'];
+            $response -> id = $row['description'];
+            $response -> id = chunk_split(base64_encode($row['logo']));
+            print_r(json_encode($response));
         }
-        return $response;
     }
 
     public function  getRankingsById()

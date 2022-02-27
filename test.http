@@ -1,26 +1,24 @@
 POST http://localhost:3000/login
 
-{"email": "aaa@aaa.aaa","password": "123456789"}
+{ "email": "aaa@aaa.aaa", "password": "123456789" }
 
 ###
 
 POST http://localhost:3000/login
 
-{"email": "m@kinis.com", "password": "12345789"}
+{ "email": "m@kinis.com", "password": "12345789" }
 
 ###
-
 
 POST http://localhost:3000/register
 
-{ "nick": "Klaus","userName": "Bescano","lastUserName":"Soll","email": "test@asd.com","description":"Soy mugeriego", "password": "12345678","dateBirth":"1991-11-11","avatar":"sad","role":"user","dateJoined":"1991-11-11","status":"1"}
+{ "nick": "Klaus", "userName": "Bescano", "lastUserName":"Soll", "email": "test@asd.com", "description":"Soy mugeriego", "password": "12345678", "dateBirth":"1991-11-11", "avatar":"sad", "role":"user", "dateJoined":"1991-11-11", "status":"1" }
 
 ###
 
-
 POST http://localhost:3000/getRankingByUser
 
-{"idUser": "18" }
+{ "idUser": "18" }
 
 ###
 
@@ -31,7 +29,6 @@ GET http://localhost:3000/status
 GET http://localhost:3000/users
 
 ###
-
 
 GET http://localhost:3000/rankings
 

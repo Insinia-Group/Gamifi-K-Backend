@@ -5,7 +5,7 @@ $validation = parse();
 $database = new Database();
 $database->connection();
 try {
-    $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDU4OTg3NDUsImF1ZCI6ImVmYWVjMWY2YjE4YmYyYjc3ZTRmN2I0YjA2OWUwOTRlODJhYjI3NDUiLCJkYXRhIjpbImFhYUBhYWEuYWFhIl19.rP8htpbqdFMdfteBjrx_jTEn9n7UKjFgCJNaw9XAE2M';
+    $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDYwODcxODUsImF1ZCI6ImRiYTZjZTg2NzQzZTNkOWE0Zjk0YzBkMDQ0ZDIyY2M1Y2JhODgzNGQiLCJkYXRhIjpbImFhYUBhYWEuYWFhIl19.T8TaW0E6rMS1-_xPiXuO3KPqd_YHU3nRj0pfpEN6rSY';
     $decoded = AUTH::decodeToken($token);
     $email = $decoded->data[0];
     $timeExpiration = $decoded->exp;
