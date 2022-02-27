@@ -48,9 +48,9 @@ class Database
         $test = $this->mysql->query('SELECT * FROM `test` WHERE testNum = 99');
         $row = $test->fetch_assoc();
         if (count($row) > 0 && $row['testString'] == true) {
-            $response->status = true;
+            $response->available = true;
         } else {
-            $response->status = false;
+            $response->available = false;
         }
         return $response;
     }
