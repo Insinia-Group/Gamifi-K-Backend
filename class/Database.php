@@ -1,5 +1,5 @@
 <?php
-
+require_once('class/Helper.php');
 class Database
 {
     /* ATTRIBUTs */
@@ -131,8 +131,7 @@ class Database
             $obj->id = $row['id'];
             $obj->name = $row['name'];
             $obj->description = $row['description'];
-            $obj->logo = chunk_split(base64_encode($row['logo']));
-            $obj->logo = str_ireplace(array("\r", "\n", "\\/", '\r', '\n', '\\/'), '', $obj->logo);
+            $obj->logo = fixingBlob($row['logo']);
             array_push($response, $obj);
         }
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
