@@ -68,7 +68,7 @@ class Database
             $row = $result->fetch_array(MYSQLI_ASSOC);
             if (password_verify($password, $row['password'])) {
                 include_once('class/Auth.php');
-                return AUTH::createToken(array($row['email']));;
+                return AUTH::createToken(array($row['email'], $row['id']));;
             } else {
                 return $this->responseError(403, 'Email or password incorrect');
             }
@@ -143,14 +143,20 @@ class Database
 
     public function getRankingByUser($idUser)
     {
-        $query = $this->mysql->prepare("SELECT id FROM `Ranking` WHERE id in (SELECT idRanking from RankingUser WHERE idUser = ?)");
+        $query = $this->mysql->prepare("SELECT * FROM `Ranking` WHERE id in (SELECT idRanking from RankingUser WHERE idUser = ?)");
         $query->bind_param('i', $idUser);
         $query->execute();
         $response = [];
         $result = $query->get_result();
         while ($row = $result->fetch_assoc()) {
+            $obj = new stdClass();
+            $obj->id = $row['id'];
+            $obj->name = $row['name'];
+            $obj->description = $row['description'];
+            $obj->logo = fixingBlob($row['logo']);
             array_push($response, $row);
         }
+
         return $response;
     }
 }

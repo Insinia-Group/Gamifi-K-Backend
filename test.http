@@ -16,14 +16,14 @@ POST http://localhost:3000/register
 
 ###
 
-POST http://localhost:3000/getRankingByUser
+POST http://localhost:3000/rankings
 
 { "idUser": "18" }
 
 ###
 
 GET http://localhost:3000/status
-
+W
 ###
 
 GET http://localhost:3000/users
