@@ -128,13 +128,14 @@ class Database
         $response = [];
         while ($row = $query->fetch_assoc()) {
             $obj = new stdClass();
-            $obj -> id = $row['id'];
-            $obj -> id = $row['name'];
-            $obj -> id = $row['description'];
-            $obj -> id = chunk_split(base64_encode($row['logo']));
+            $obj->id = $row['id'];
+            $obj->name = $row['name'];
+            $obj->description = $row['description'];
+            $obj->logo = chunk_split(base64_encode($row['logo']));
+            $obj->logo = str_ireplace(array("\r", "\n", "\\/", '\r', '\n', '\\/'), '', $obj->logo);
             array_push($response, $obj);
         }
-        print_r(json_encode($response));
+        print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
     public function  getRankingsById()
