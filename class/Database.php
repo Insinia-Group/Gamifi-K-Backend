@@ -70,7 +70,7 @@ class Database
                 include_once('class/Auth.php');
                 return AUTH::createToken(array($row['email'], $row['id']));;
             } else {
-                return $this->responseError(403, 'Email or password incorrect');
+                print_r(json_encode($this->responseError(403, 'Email or password incorrect')));
             }
         } catch (Exception $error) {
             return $error;
