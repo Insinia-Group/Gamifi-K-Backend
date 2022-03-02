@@ -154,9 +154,8 @@ class Database
             $obj->name = $row['name'];
             $obj->description = $row['description'];
             $obj->logo = fixingBlob($row['logo']);
-            array_push($response, $row);
+            array_push($response, $obj);
         }
-
-        return $response;
+        print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 }

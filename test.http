@@ -3,6 +3,11 @@ POST http://localhost:3000/login
 { "email": "aaa@aaa.aaa", "password": "123456789" }
 
 ###
+POST http://localhost:3000/login
+
+{ "email": "cara@cara.cara", "password": "123456789" }
+
+###
 
 POST http://localhost:3000/login
 
@@ -16,9 +21,11 @@ POST http://localhost:3000/register
 
 ###
 
-POST http://localhost:3000/rankings
+GET http://localhost:3000/rankings
 
-{ "idUser": "18" }
+###
+
+GET http://localhost:3000/insignias
 
 ###
 
@@ -29,6 +36,5 @@ GET http://localhost:3000/users
 
 ###
 
-GET http://localhost:3000/rankings
 
 
