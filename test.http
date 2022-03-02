@@ -23,7 +23,6 @@ POST http://localhost:3000/rankings
 ###
 
 GET http://localhost:3000/status
-W
 ###
 
 GET http://localhost:3000/users
