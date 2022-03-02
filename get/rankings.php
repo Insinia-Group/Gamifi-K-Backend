@@ -4,7 +4,7 @@ include_once('class/Auth.php');
 $database = new Database();
 $database->connection();
 try {
-    $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDYzMjk0NzcsImF1ZCI6ImVmYWVjMWY2YjE4YmYyYjc3ZTRmN2I0YjA2OWUwOTRlODJhYjI3NDUiLCJkYXRhIjpbImNhcmFAY2FyYS5jYXJhIiwyMV19.jGHITmLoqbwf_jEH4IiIcKCoPERBcHhWRY4P-pouwVU';
+    $token = getClientToken();
     $decoded = AUTH::decodeToken($token);
     $email = $decoded->data[0];
     $id = $decoded->data[1];
