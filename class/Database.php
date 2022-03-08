@@ -161,7 +161,7 @@ class Database
 
     public function getProfile($id)
     {
-        $query = $this->mysql->prepare("Select * FROM User WHERE id = ?");
+        $query = $this->mysql->prepare("Select id, nick, name, lastName, email, description, dateBirth, avatar, role, dateJoined, status FROM User WHERE id = ?");
         $query->bind_param('i', $id);
         $query->execute();
         $response = [];
@@ -174,14 +174,13 @@ class Database
             $obj->lastName = $row['lastName'];
             $obj->email = $row['email'];
             $obj->description = $row['description'];
-            $obj->password = $row['password'];
             $obj->dateBirth = $row['dateBirth'];
             $obj->avatar = fixingBlob($row['avatar']);
             $obj->role = $row['role'];
             $obj->dateJoined = $row['dateJoined'];
             $obj->status = $row['status'];
             array_push($response, $obj);
-        }
+        };
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 }
