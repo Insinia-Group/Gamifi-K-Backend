@@ -13,7 +13,8 @@ function fixingBlob($blob)
 /**
  * Devuelve el token de la request del cliente.
  */
-function getClientToken() {
+function getClientToken()
+{
     $tokens = apache_request_headers();
     return $tokens['Authorization'];
 }

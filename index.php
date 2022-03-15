@@ -10,6 +10,7 @@ get('/status', 'get/status.php');
 get('/profile', 'get/profile.php');
 get('/users', 'get/users.php');
 get('/rankings', 'get/rankings.php');
+get('/tokenValidation', 'get/tokenValidation.php');
 
 
 /* POSTs */
