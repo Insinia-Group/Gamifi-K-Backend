@@ -159,6 +159,24 @@ class Database
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
+    public function getRankingData($idUser)
+    {
+        $query = $this->mysql->prepare("SELECT b.nick, c.name, a.points FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser = ?) ORDER BY c.name;");
+        $query->bind_param('i', $idUser);
+        $query->execute();
+        $response = [];
+        $result = $query->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $obj = new stdClass();
+            $obj->nick = $row['nick'];
+            $obj->name = $row['name'];
+            $obj->points = $row['points'];
+            // $obj->points = $row['points'];
+            array_push($response, $obj);
+        }
+        print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
+
     public function getProfile($id)
     {
         $query = $this->mysql->prepare("Select id, nick, name, lastName, email, description, dateBirth, avatar, role, dateJoined, status FROM User WHERE id = ?");
