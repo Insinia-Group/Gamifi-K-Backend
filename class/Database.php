@@ -168,9 +168,9 @@ class Database
         $result = $query->get_result();
         while ($row = $result->fetch_assoc()) {
             $obj = new stdClass();
-            $obj->nick = $row['nick'];
-            $obj->name = $row['name'];
-            $obj->points = $row['points'];
+            $obj->Usuario = $row['nick'];
+            $obj->Ranking = $row['name'];
+            $obj->Puntos = $row['points'];
             // $obj->points = $row['points'];
             array_push($response, $obj);
         }
