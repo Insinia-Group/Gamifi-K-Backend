@@ -11,6 +11,7 @@ get('/profile', 'get/profile.php');
 get('/users', 'get/users.php');
 get('/rankings', 'get/rankings.php');
 get('/rankingData', 'get/rankingData.php');
+get('/rankingById', 'get/rankingById.php');
 get('/tokenValidation', 'get/tokenValidation.php');
 
 
