@@ -12,7 +12,7 @@ try {
     $timeExpiration = $decoded->exp;
     $isExpired = AUTH::isExpired($timeExpiration);
     $isAdmin = $database->isAdmin($email);
-    if (!$isExpired && $isAdmin) {
+    if (!$isExpired) {
         $database->getProfile($id);
     } else if (AUTH::isExpired($timeExpiration)) {
         print_r(json_encode($database->responseError(403, 'Your token access is expired.')));
