@@ -167,15 +167,22 @@ class Database
                 $obj->rankingLast->id=$row2['id'];
                 $obj->rankingLast->Puntos=$row2['points'];
                 array_push($obj->rankingData, $obj->rankingLast);
-                // if($obj->rankingData != null){
-                //     $obj->rankingData = json_encode($obj->rankingData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)  .json_encode($obj->rankingLast, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ;
-                // }else{
-                //     $obj->rankingData = $obj->rankingLast;
-                // }
             }
             array_push($response, $obj);
         }
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
+
+    public function addRankingByCode($code,$idUser){
+        try {
+            $query = $this->mysql->prepare("INSERT INTO `RankingUser`(`idRanking`, `idUser`, `points`, `favourite`) VALUES ((SELECT id from Ranking WHERE joinCode = ? ),?,'0','1');");
+            $query->bind_param('si',$code,$idUser);
+            $query->execute();
+            $result = $query->get_result();
+        } catch (Exception $error) {
+            return $error;
+        }
+
     }
 
 
