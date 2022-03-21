@@ -71,7 +71,6 @@ function route($route, $path_to_include)
   include_once("$ROOT/$path_to_include");
   exit();
 }
-
 function out($text)
 {
   echo htmlspecialchars($text);
@@ -92,9 +91,4 @@ function is_csrf_valid()
     return false;
   }
   return true;
-}
-function parse()
-{
-  $json = file_get_contents("php://input");
-  return json_decode($json);
 }
