@@ -140,7 +140,7 @@ class Database
     /**
      * getRankingByUser - Genera json con los rankings por usuraio con un sub json que contiene los usuarios con su puntuacion para cada ranking 
      */
-    
+
     public function getRankingByUser($idUser)
     {
         $query = $this->mysql->prepare("SELECT * FROM `Ranking` WHERE id in (SELECT idRanking from RankingUser WHERE idUser = ?)");
@@ -157,16 +157,16 @@ class Database
             $obj->description = $row['description'];
             $obj->logo = fixingBlob($row['logo']);
             $subQuery = $this->mysql->prepare("SELECT b.name,b.lastName,c.id, a.points FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser =?) AND c.id = ? ORDER BY a.points DESC");
-            $subQuery->bind_param('ii', $idUser,$obj->id);
+            $subQuery->bind_param('ii', $idUser, $obj->id);
             $subQuery->execute();
             $result2 = $subQuery->get_result();
             $obj->rankingData = [];
             while ($row2 = $result2->fetch_assoc()) {
                 $obj->rankingLast = new stdClass();
                 $obj->rankingLast->Nombre = $row2['name'];
-                $obj->rankingLast->Apellido=$row2['lastName'];
-                $obj->rankingLast->id=$row2['id'];
-                $obj->rankingLast->Puntos=$row2['points'];
+                $obj->rankingLast->Apellido = $row2['lastName'];
+                $obj->rankingLast->id = $row2['id'];
+                $obj->rankingLast->Puntos = $row2['points'];
                 array_push($obj->rankingData, $obj->rankingLast);
             }
             array_push($response, $obj);
@@ -177,41 +177,41 @@ class Database
     /**
      * addRankingByCode - Añade un ranking al usuario por su codigo unico
      */
-    public function addRankingByCode($code,$idUser){
+    public function addRankingByCode($code, $idUser)
+    {
         try {
             $query = $this->mysql->prepare("INSERT INTO `RankingUser`(`idRanking`, `idUser`, `points`, `favourite`) VALUES ((SELECT id from Ranking WHERE joinCode = ? ),?,'0','1');");
-            $query->bind_param('si',$code,$idUser);
+            $query->bind_param('si', $code, $idUser);
             $query->execute();
             $result = $query->get_result();
         } catch (Exception $error) {
             return $error;
         }
-
     }
 
     /**
      * getRankingData - Obtiene los datos de cada ranking
      */
 
-    // public function getRankingData($idUser)
-    // {
-    //     $query = $this->mysql->prepare("SELECT b.nick, c.name,c.id, a.points FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser = ?) ORDER BY c.name;");
-    //     $query->bind_param('i', $idUser);
-    //     $query->execute();
-    //     $response = [];
-    //     $result = $query->get_result();
-    //     while ($row = $result->fetch_assoc()) {
-    //         $obj = new stdClass();
-    //         $obj->Usuarios = $row['nick'];
-    //         $obj->Ranking = $row['name'];
-    //         $obj->id = $row['id'];
-    //         $obj->Puntos = $row['points'];
-          
-    //         // $obj->points = $row['points'];
-    //         array_push($response, $obj);
-    //     }
-    //     print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
-    // }
+    public function getRankingData($idUser)
+    {
+        $query = $this->mysql->prepare("SELECT b.nick, c.name,c.id, a.points FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser = ?) ORDER BY c.name;");
+        $query->bind_param('i', $idUser);
+        $query->execute();
+        $response = [];
+        $result = $query->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $obj = new stdClass();
+            $obj->Usuarios = $row['nick'];
+            $obj->Ranking = $row['name'];
+            $obj->id = $row['id'];
+            $obj->Puntos = $row['points'];
+
+            // $obj->points = $row['points'];
+            array_push($response, $obj);
+        }
+        print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
 
     public function getProfile($id)
     {
