@@ -237,4 +237,11 @@ class Database
         };
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
+
+    public function updateAvatarById($idUser, $image) {
+        $query = $this->mysql->prepare("UPDATE user SET avatar = ? WHERE id = ?");
+        $query->bind_param('bi', $image, $idUser);
+        $query->execute();
+        $result = $query->get_result();
+    }
 }

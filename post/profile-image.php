@@ -1,17 +1,15 @@
 <?php
 include_once('class/Database.php');
-$validation = parse();
+include_once('class/Auth.php');
 $database = new Database();
 $database->connection();
+$validation = parse();
+$token = getClientToken();
+$decoded = AUTH::decodeToken($token);
+$id = $decoded->data[1];
 try {
-    if (isset($_FILES['file'])) {
-        $type = $_FILES['file']['type'];
-        $foto = $_FILES['file']['tmp_name'];
-        $data = file_get_contents($foto);
-        $fotoFinal = 'data:' . $type . ';base64,' . base64_encode($data);
-    }
-    $header = apache_request_headers();
-    print_r(json_encode($header));
+    $database->updateAvatarById($id, $validation->image);
+    $database->getProfile($id);
 } catch (Exception $error) {
     print_r(json_encode($database->responseError(403, 'Invalid data')));
 }
