@@ -147,7 +147,6 @@ class Database
         $query->bind_param('i', $idUser);
         $query->execute();
         $response = [];
-        $response2 = [];
         $result = $query->get_result();
         while ($row = $result->fetch_assoc()) {
             $obj = new stdClass();
@@ -235,13 +234,13 @@ class Database
             $obj->status = $row['status'];
             array_push($response, $obj);
         };
-        print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        print_r(json_encode($response));
     }
 
-    public function updateAvatarById($idUser, $image) {
-        $query = $this->mysql->prepare("UPDATE user SET avatar = ? WHERE id = ?");
-        $query->bind_param('bi', $image, $idUser);
+    public function updateAvatarById($image, $idUser)
+    {
+        $query = $this->mysql->prepare("UPDATE `User` SET `avatar`= ? WHERE id = ?");
+        $query->bind_param('si', $image, $idUser);
         $query->execute();
-        $result = $query->get_result();
     }
 }
