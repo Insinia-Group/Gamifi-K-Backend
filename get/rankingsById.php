@@ -14,7 +14,7 @@ try {
     if (!$isExpired && $isAdmin) {
         json_encode($database->getRankings());
     } else if (!$isExpired && !$isAdmin) {
-        json_encode($database->getRankingsById($id));
+        json_encode($database->getRankingsByUser($id));
     } else if (AUTH::isExpired($timeExpiration)) {
         print_r(json_encode($database->responseError(403, 'Your token access is expired.')));
     } else if (!$isAdmin) {

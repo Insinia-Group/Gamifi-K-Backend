@@ -141,9 +141,9 @@ class Database
      * getRankingByUser - Genera json con los rankings por usuraio con un sub json que contiene los usuarios con su puntuacion para cada ranking 
      */
 
-    public function getRankingByUser($idUser)
+    public function getRankingsByUser($idUser)
     {
-        $query = $this->mysql->prepare("SELECT * FROM `Ranking` WHERE id in (SELECT idRanking from RankingUser WHERE idUser = ?)");
+        $query = $this->mysql->prepare("SELECT * FROM `Ranking` WHERE id in (SELECT idRanking from RankingUser WHERE idUser = ? AND role = 'user')");
         $query->bind_param('i', $idUser);
         $query->execute();
         $response = [];
@@ -174,7 +174,44 @@ class Database
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
+    /*
+     * Obtenemos los rankings en los que el usuario es moderador
+     */
+
+    public function getRankingsByModerator($idUser)
+    {
+        $query = $this->mysql->prepare("SELECT * FROM `Ranking` WHERE id in (SELECT idRanking from RankingUser WHERE idUser = ? AND role = 'moderator')");
+        $query->bind_param('i', $idUser);
+        $query->execute();
+        $response = [];
+        $response2 = [];
+        $result = $query->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $obj = new stdClass();
+            $obj->rankingData = new stdClass();
+            $obj->id = $row['id'];
+            $obj->name = $row['name'];
+            $obj->description = $row['description'];
+            $obj->logo = fixingBlob($row['logo']);
+            $subQuery = $this->mysql->prepare("SELECT Users.name, Users.lastName, Users.id, Rankings.id, RankingsUser.points FROM RankingUser RankingsUser INNER JOIN User Users ON RankingsUser.idUser = Users.id INNER JOIN Ranking Rankings ON RankingsUser.idRanking = Rankings.id AND RankingsUser.idRanking IN (SELECT idRanking from RankingUser where idUser = ? ) AND Rankings.id = ? AND Users.id != ?  AND RankingsUser.role != 'moderator' ORDER BY `Users`.`id` ASC");
+            $subQuery->bind_param('iii', $idUser, $obj->id, $idUser);
+            $subQuery->execute();
+            $result2 = $subQuery->get_result();
+            $obj->rankingData = [];
+            while ($row2 = $result2->fetch_assoc()) {
+                $obj->rankingLast = new stdClass();
+                $obj->rankingLast->Nombre = $row2['name'];
+                $obj->rankingLast->Apellido = $row2['lastName'];
+                $obj->rankingLast->id = $row2['id'];
+                $obj->rankingLast->Puntos = $row2['points'];
+                array_push($obj->rankingData, $obj->rankingLast);
+            }
+            array_push($response, $obj);
+        }
+        print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
     /**
+  /**
      * addRankingByCode - Añade un ranking al usuario por su codigo unico
      */
     public function addRankingByCode($code, $idUser)
@@ -188,6 +225,8 @@ class Database
             return $error;
         }
     }
+
+
 
     /**
      * getRankingData - Obtiene los datos de cada ranking
@@ -236,5 +275,17 @@ class Database
             array_push($response, $obj);
         };
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
+
+    public function createRanking($data, $idUser)
+    {
+        try {
+            $query = $this->mysql->prepare("INSERT INTO `RankingUser`(`idRanking`, `idUser`, `points`, `favourite`) VALUES ((SELECT id from Ranking WHERE joinCode = ? ),?,'0','1');");
+            $query->bind_param('si', $data, $idUser);
+            $query->execute();
+            $result = $query->get_result();
+        } catch (Exception $error) {
+            return $error;
+        }
     }
 }
