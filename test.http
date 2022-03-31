@@ -11,7 +11,7 @@ POST http://localhost:3000/login
 
 POST http://localhost:3000/login
 
-{ "email": "m@kinis.com", "password": "12345789" }
+{ "email": "aaa@aaa.aaa", "password": "12345789" }
 
 ###
 
