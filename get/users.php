@@ -19,5 +19,5 @@ try {
         print_r(json_encode($database->responseError(403, 'You are not allowed for this action.')));
     }
 } catch (Exception $error) {
-    echo $error;
+    print_r(json_encode($database->responseError(403, 'Error with the action.')));
 }
