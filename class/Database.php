@@ -161,6 +161,7 @@ class Database
             $subQuery->execute();
             $result2 = $subQuery->get_result();
             $obj->rankingData = [];
+
             while ($row2 = $result2->fetch_assoc()) {
                 $obj->rankingLast = new stdClass();
                 $obj->rankingLast->Nombre = $row2['name'];
@@ -287,5 +288,11 @@ class Database
         } catch (Exception $error) {
             return $error;
         }
+    }
+    public function updateAvatarById($image, $idUser)
+    {
+        $query = $this->mysql->prepare("UPDATE `User` SET `avatar`= ? WHERE id = ?");
+        $query->bind_param('si', $image, $idUser);
+        $query->execute();
     }
 }
