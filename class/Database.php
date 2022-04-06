@@ -156,7 +156,7 @@ class Database
             $obj->name = $row['name'];
             $obj->description = $row['description'];
             $obj->logo = fixingBlob($row['logo']);
-            $subQuery = $this->mysql->prepare("SELECT b.name,b.lastName,c.id, a.points FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser =?) AND c.id = ? ORDER BY a.points DESC");
+            $subQuery = $this->mysql->prepare("SELECT b.name,b.lastName,b.id as idUser, c.id, a.points FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser =?) AND c.id = ? ORDER BY a.points DESC");
             $subQuery->bind_param('ii', $idUser, $obj->id);
             $subQuery->execute();
             $result2 = $subQuery->get_result();
@@ -166,6 +166,7 @@ class Database
                 $obj->rankingLast = new stdClass();
                 $obj->rankingLast->Nombre = $row2['name'];
                 $obj->rankingLast->Apellido = $row2['lastName'];
+                $obj->rankingLast->idUser = $row2['idUser'];
                 $obj->rankingLast->id = $row2['id'];
                 $obj->rankingLast->Puntos = $row2['points'];
                 array_push($obj->rankingData, $obj->rankingLast);
@@ -194,7 +195,7 @@ class Database
             $obj->name = $row['name'];
             $obj->description = $row['description'];
             $obj->logo = fixingBlob($row['logo']);
-            $subQuery = $this->mysql->prepare("SELECT Users.name, Users.lastName, Users.id, Rankings.id, RankingsUser.points FROM RankingUser RankingsUser INNER JOIN User Users ON RankingsUser.idUser = Users.id INNER JOIN Ranking Rankings ON RankingsUser.idRanking = Rankings.id AND RankingsUser.idRanking IN (SELECT idRanking from RankingUser where idUser = ? ) AND Rankings.id = ? AND Users.id != ?  AND RankingsUser.role != 'moderator' ORDER BY `Users`.`id` ASC");
+            $subQuery = $this->mysql->prepare("SELECT Users.name, Users.lastName, Users.id as idUser, Rankings.id, RankingsUser.points FROM RankingUser RankingsUser INNER JOIN User Users ON RankingsUser.idUser = Users.id INNER JOIN Ranking Rankings ON RankingsUser.idRanking = Rankings.id AND RankingsUser.idRanking IN (SELECT idRanking from RankingUser where idUser = ? ) AND Rankings.id = ? AND Users.id != ?  AND RankingsUser.role != 'moderator' ORDER BY `Users`.`id` ASC");
             $subQuery->bind_param('iii', $idUser, $obj->id, $idUser);
             $subQuery->execute();
             $result2 = $subQuery->get_result();
@@ -203,6 +204,7 @@ class Database
                 $obj->rankingLast = new stdClass();
                 $obj->rankingLast->Nombre = $row2['name'];
                 $obj->rankingLast->Apellido = $row2['lastName'];
+                $obj->rankingLast->idUser = $row2['idUser'];
                 $obj->rankingLast->id = $row2['id'];
                 $obj->rankingLast->Puntos = $row2['points'];
                 array_push($obj->rankingData, $obj->rankingLast);
@@ -235,7 +237,7 @@ class Database
 
     public function getRankingData($idUser)
     {
-        $query = $this->mysql->prepare("SELECT b.nick, c.name,c.id, a.points FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser = ?) ORDER BY c.name;");
+        $query = $this->mysql->prepare("SELECT b.nick,b.id as idUser, c.name,c.id, a.points FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser = ?) ORDER BY c.name;");
         $query->bind_param('i', $idUser);
         $query->execute();
         $response = [];
@@ -245,6 +247,7 @@ class Database
             $obj->Usuarios = $row['nick'];
             $obj->Ranking = $row['name'];
             $obj->id = $row['id'];
+            $obj->idUser = $row['idUser'];
             $obj->Puntos = $row['points'];
 
             // $obj->points = $row['points'];
@@ -293,6 +296,13 @@ class Database
     {
         $query = $this->mysql->prepare("UPDATE `User` SET `avatar`= ? WHERE id = ?");
         $query->bind_param('si', $image, $idUser);
+        $query->execute();
+    }
+
+    public function updateData($id, $idUser, $points)
+    {
+        $query = $this->mysql->prepare("UPDATE RankingUser SET points=? WHERE idRanking = ? AND idUser = ?");
+        $query->bind_param('iii', $points, $id, $idUser);
         $query->execute();
     }
 }
