@@ -195,7 +195,7 @@ class Database
             $obj->name = $row['name'];
             $obj->description = $row['description'];
             $obj->logo = fixingBlob($row['logo']);
-            $subQuery = $this->mysql->prepare("SELECT Users.name, Users.lastName, Users.id as idUser, Rankings.id, RankingsUser.points FROM RankingUser RankingsUser INNER JOIN User Users ON RankingsUser.idUser = Users.id INNER JOIN Ranking Rankings ON RankingsUser.idRanking = Rankings.id AND RankingsUser.idRanking IN (SELECT idRanking from RankingUser where idUser = ? ) AND Rankings.id = ? AND Users.id != ?  AND RankingsUser.role != 'moderator' ORDER BY `Users`.`id` ASC");
+            $subQuery = $this->mysql->prepare("SELECT Users.name, Users.lastName, Users.id as idUser, Rankings.id, RankingsUser.points FROM RankingUser RankingsUser INNER JOIN User Users ON RankingsUser.idUser = Users.id INNER JOIN Ranking Rankings ON RankingsUser.idRanking = Rankings.id AND RankingsUser.idRanking IN (SELECT idRanking from RankingUser where idUser = ? ) AND Rankings.id = ? AND Users.id != ?  AND RankingsUser.role != 'moderator' ORDER BY `RankingsUser`.`points` DESC");
             $subQuery->bind_param('iii', $idUser, $obj->id, $idUser);
             $subQuery->execute();
             $result2 = $subQuery->get_result();
@@ -220,7 +220,7 @@ class Database
     public function addRankingByCode($code, $idUser)
     {
         try {
-            $query = $this->mysql->prepare("INSERT INTO `RankingUser`(`idRanking`, `idUser`, `points`, `favourite`) VALUES ((SELECT id from Ranking WHERE joinCode = ? ),?,'0','1');");
+            $query = $this->mysql->prepare("INSERT INTO `RankingUser`(`idRanking`, `idUser`, `points`, `favourite`,`role`) VALUES ((SELECT id from Ranking WHERE joinCode = ? ),?,'0','1','user');");
             $query->bind_param('si', $code, $idUser);
             $query->execute();
             $result = $query->get_result();
@@ -321,5 +321,19 @@ class Database
         $query = $this->mysql->prepare("UPDATE RankingUser SET points=? WHERE idRanking = ? AND idUser = ?");
         $query->bind_param('iii', $points, $id, $idUser);
         $query->execute();
+    }
+
+    public function  validateEmail($email)
+    {
+        $response = new stdClass();
+        $query = $this->mysql->prepare("SELECT COUNT(*) as COUNTA FROM User WHERE email = ?");
+        $query->bind_param('s', $email);
+        $query->execute();
+        $result = $query->get_result();
+        if ($result->fetch_assoc()['COUNTA'] > 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }
