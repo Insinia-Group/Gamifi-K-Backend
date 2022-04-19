@@ -23,3 +23,4 @@ post('/register', 'post/register.php');
 post('/profile/image', 'post/profile-image.php');
 post('/addRankingByCode', 'post/addRankingByCode.php');
 post('/updateData', 'post/updateData.php');
+post('/validateEmail', 'post/validateEmail.php');
