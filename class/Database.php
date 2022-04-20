@@ -304,6 +304,19 @@ class Database
         $query->execute();
     }
 
+    public function updateProfile($profile, $id)
+    {
+        $queryString = "UPDATE `User` SET ";
+        $keys =  array();
+        $vars = get_object_vars($profile);
+        foreach ($vars as $key => $value) {
+            array_push($keys, "$key = '$value'");
+        }
+        $queryString = $queryString . implode(", ", $keys) . " WHERE id = $id";
+        $query = $this->mysql->prepare($queryString);
+        $query->execute();
+    }
+
     public function updateData($id, $idUser, $points)
     {
         $query = $this->mysql->prepare("UPDATE RankingUser SET points=? WHERE idRanking = ? AND idUser = ?");

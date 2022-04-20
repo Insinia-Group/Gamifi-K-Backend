@@ -21,6 +21,7 @@ post('/login', 'post/login.php');
 post('/singup', 'post/signup.php');
 post('/register', 'post/register.php');
 post('/profile/image', 'post/profile-image.php');
+post('/profile/data', 'post/profile-data.php');
 post('/addRankingByCode', 'post/addRankingByCode.php');
 post('/updateData', 'post/updateData.php');
 post('/validateEmail', 'post/validateEmail.php');
