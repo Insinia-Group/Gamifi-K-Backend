@@ -24,4 +24,5 @@ post('/profile/image', 'post/profile-image.php');
 post('/profile/data', 'post/profile-data.php');
 post('/addRankingByCode', 'post/addRankingByCode.php');
 post('/updateData', 'post/updateData.php');
+post('/updatePoints', 'post/updatePoints.php');
 post('/validateEmail', 'post/validateEmail.php');

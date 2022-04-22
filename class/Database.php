@@ -156,7 +156,7 @@ class Database
             $obj->name = $row['name'];
             $obj->description = $row['description'];
             $obj->logo = fixingBlob($row['logo']);
-            $subQuery = $this->mysql->prepare("SELECT b.name,b.lastName,b.id as idUser,b.responsability,b.cooperation,b.autonomy,b.emotional,b.thinking, c.id, a.points FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser =?) AND c.id = ? ORDER BY a.points DESC");
+            $subQuery = $this->mysql->prepare("SELECT b.name,b.lastName,b.id as idUser,b.Responsabilidad,b.Coperacion,b.Autonomia,b.Emocional,b.Inteligencia, c.id, a.points FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser =?) AND c.id = ? ORDER BY a.points DESC");
             $subQuery->bind_param('ii', $idUser, $obj->id);
             $subQuery->execute();
             $result2 = $subQuery->get_result();
@@ -168,11 +168,11 @@ class Database
                 $obj->rankingLast->Apellido = $row2['lastName'];
                 $obj->rankingLast->idUser = $row2['idUser'];
                 $obj->rankingLast->id = $row2['id'];
-                $obj->rankingLast->responsability = $row2['responsability'];
-                $obj->rankingLast->cooperation = $row2['cooperation'];
-                $obj->rankingLast->autonomy = $row2['autonomy'];
-                $obj->rankingLast->emotional = $row2['emotional'];
-                $obj->rankingLast->thinking = $row2['thinking'];
+                $obj->rankingLast->Responsabilidad = $row2['Responsabilidad'];
+                $obj->rankingLast->Coperacion = $row2['Coperacion'];
+                $obj->rankingLast->Autonomia = $row2['Autonomia'];
+                $obj->rankingLast->Emocional = $row2['Emocional'];
+                $obj->rankingLast->Inteligencia = $row2['Inteligencia'];
                 $obj->rankingLast->Puntos = $row2['points'];
                 array_push($obj->rankingData, $obj->rankingLast);
             }
@@ -301,19 +301,6 @@ class Database
     {
         $query = $this->mysql->prepare("UPDATE `User` SET `avatar`= ? WHERE id = ?");
         $query->bind_param('si', $image, $idUser);
-        $query->execute();
-    }
-
-    public function updateProfile($profile, $id)
-    {
-        $queryString = "UPDATE `User` SET ";
-        $keys =  array();
-        $vars = get_object_vars($profile);
-        foreach ($vars as $key => $value) {
-            array_push($keys, "$key = '$value'");
-        }
-        $queryString = $queryString . implode(", ", $keys) . " WHERE id = $id";
-        $query = $this->mysql->prepare($queryString);
         $query->execute();
     }
 
