@@ -165,6 +165,7 @@ class Database
             while ($row2 = $result2->fetch_assoc()) {
                 $obj->rankingLast = new stdClass();
                 $obj->rankingLast->Nombre = $row2['name'];
+                $obj->rankingLast->isModerator = false;
                 $obj->rankingLast->Apellido = $row2['lastName'];
                 $obj->rankingLast->idUser = $row2['idUser'];
                 $obj->rankingLast->id = $row2['id'];
@@ -208,6 +209,7 @@ class Database
             while ($row2 = $result2->fetch_assoc()) {
                 $obj->rankingLast = new stdClass();
                 $obj->rankingLast->Nombre = $row2['name'];
+                $obj->rankingLast->isModerator = true;
                 $obj->rankingLast->Apellido = $row2['lastName'];
                 $obj->rankingLast->idUser = $row2['idUser'];
                 $obj->rankingLast->id = $row2['id'];
@@ -316,11 +318,35 @@ class Database
         $query->execute();
     }
 
-    public function updateInsinia($idUser, $points, $insinia)
+    public function updateInsinia($idRanking, $idUserModified, $points, $insinia, $idUserClient, $isModerator)
     {
-        $query = $this->mysql->prepare("UPDATE User SET $insinia=? WHERE id = ?");
-        $query->bind_param('ii', $points, $idUser);
+        $query = $this->mysql->prepare("SELECT `insiniaPoints` as puntos FROM `RankingUser` WHERE idRanking = ? AND idUser = ?;");
+        $query->bind_param('ii', $idRanking, $idUserClient);
         $query->execute();
+        $result = $query->get_result();
+        $puntos = $result->fetch_assoc()['puntos'];
+        $puntosMenosCliente = $puntos - $points;
+        if ($isModerator == true) {
+            $query = $this->mysql->prepare("UPDATE User SET $insinia=(SELECT $insinia FROM User WHERE id = ?) + ? WHERE id = ?");
+            $query->bind_param('iii', $idUserModified, $points, $idUserModified);
+            $query->execute();
+
+            $query2 = $this->mysql->prepare("UPDATE RankingUser SET insiniaPoints=? WHERE idRanking = ? AND idUser = ?");
+            $query2->bind_param('iii', $puntosMenosCliente, $idRanking, $idUserClient);
+            $query2->execute();
+        } else if ($puntosMenosCliente < 0) {
+            print_r("MENOS PUNTOS");
+            print_r($puntosMenosCliente);
+            return false;
+        } else {
+            $query = $this->mysql->prepare("UPDATE User SET $insinia=(SELECT $insinia FROM User WHERE id = ?) + ? WHERE id = ?");
+            $query->bind_param('iii', $idUserModified, $points, $idUserModified);
+            $query->execute();
+
+            $query2 = $this->mysql->prepare("UPDATE RankingUser SET insiniaPoints=? WHERE idRanking = ? AND idUser = ?");
+            $query2->bind_param('iii', $puntosMenosCliente, $idRanking, $idUserClient);
+            $query2->execute();
+        }
     }
 
     public function updateProfile($profile, $id)
