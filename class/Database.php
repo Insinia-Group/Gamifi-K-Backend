@@ -156,7 +156,7 @@ class Database
             $obj->name = $row['name'];
             $obj->description = $row['description'];
             $obj->logo = fixingBlob($row['logo']);
-            $subQuery = $this->mysql->prepare("SELECT b.name,b.lastName,b.id as idUser,b.Responsabilidad,b.Coperacion,b.Autonomia,b.Emocional,b.Inteligencia, c.id, a.points FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser =?) AND c.id = ? ORDER BY a.points DESC");
+            $subQuery = $this->mysql->prepare("SELECT b.name,b.lastName,b.id as idUser,b.Responsabilidad,b.Cooperacion,b.Autonomia,b.Emocional,b.Inteligencia, c.id, a.points FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser =?) AND c.id = ? ORDER BY a.points DESC");
             $subQuery->bind_param('ii', $idUser, $obj->id);
             $subQuery->execute();
             $result2 = $subQuery->get_result();
@@ -170,7 +170,7 @@ class Database
                 $obj->rankingLast->idUser = $row2['idUser'];
                 $obj->rankingLast->id = $row2['id'];
                 $obj->rankingLast->Responsabilidad = $row2['Responsabilidad'];
-                $obj->rankingLast->Coperacion = $row2['Coperacion'];
+                $obj->rankingLast->Cooperacion = $row2['Cooperacion'];
                 $obj->rankingLast->Autonomia = $row2['Autonomia'];
                 $obj->rankingLast->Emocional = $row2['Emocional'];
                 $obj->rankingLast->Inteligencia = $row2['Inteligencia'];
@@ -201,7 +201,7 @@ class Database
             $obj->name = $row['name'];
             $obj->description = $row['description'];
             $obj->logo = fixingBlob($row['logo']);
-            $subQuery = $this->mysql->prepare("SELECT Users.name, Users.lastName, Users.id as idUser,Users.Responsabilidad,Users.Coperacion,Users.Autonomia,Users.Emocional,Users.Inteligencia, Rankings.id, RankingsUser.points FROM RankingUser RankingsUser INNER JOIN User Users ON RankingsUser.idUser = Users.id INNER JOIN Ranking Rankings ON RankingsUser.idRanking = Rankings.id AND RankingsUser.idRanking IN (SELECT idRanking from RankingUser where idUser = ? ) AND Rankings.id = ? AND Users.id != ?  AND RankingsUser.role != 'moderator' ORDER BY `RankingsUser`.`points` DESC");
+            $subQuery = $this->mysql->prepare("SELECT Users.name, Users.lastName, Users.id as idUser,Users.Responsabilidad,Users.Cooperacion,Users.Autonomia,Users.Emocional,Users.Inteligencia, Rankings.id, RankingsUser.points FROM RankingUser RankingsUser INNER JOIN User Users ON RankingsUser.idUser = Users.id INNER JOIN Ranking Rankings ON RankingsUser.idRanking = Rankings.id AND RankingsUser.idRanking IN (SELECT idRanking from RankingUser where idUser = ? ) AND Rankings.id = ? AND Users.id != ?  AND RankingsUser.role != 'moderator' ORDER BY `RankingsUser`.`points` DESC");
             $subQuery->bind_param('iii', $idUser, $obj->id, $idUser);
             $subQuery->execute();
             $result2 = $subQuery->get_result();
@@ -214,7 +214,7 @@ class Database
                 $obj->rankingLast->idUser = $row2['idUser'];
                 $obj->rankingLast->id = $row2['id'];
                 $obj->rankingLast->Responsabilidad = $row2['Responsabilidad'];
-                $obj->rankingLast->Coperacion = $row2['Coperacion'];
+                $obj->rankingLast->Cooperacion = $row2['Cooperacion'];
                 $obj->rankingLast->Autonomia = $row2['Autonomia'];
                 $obj->rankingLast->Emocional = $row2['Emocional'];
                 $obj->rankingLast->Inteligencia = $row2['Inteligencia'];
@@ -327,15 +327,14 @@ class Database
         $puntos = $result->fetch_assoc()['puntos'];
         $puntosMenosCliente = $puntos - $points;
         if ($isModerator == true) {
-            $query = $this->mysql->prepare("UPDATE User SET $insinia=(SELECT $insinia FROM User WHERE id = ?) + ? WHERE id = ?");
-            $query->bind_param('iii', $idUserModified, $points, $idUserModified);
+            $query = $this->mysql->prepare("UPDATE User SET $insinia= ? WHERE id = ?");
+            $query->bind_param('ii',  $points, $idUserModified);
             $query->execute();
 
             $query2 = $this->mysql->prepare("UPDATE RankingUser SET insiniaPoints=? WHERE idRanking = ? AND idUser = ?");
             $query2->bind_param('iii', $puntosMenosCliente, $idRanking, $idUserClient);
             $query2->execute();
-        } else if ($puntosMenosCliente < 0) {
-            print_r("MENOS PUNTOS");
+        } else if ($puntosMenosCliente < 0 || $points < 0) {
             print_r($puntosMenosCliente);
             return false;
         } else {
