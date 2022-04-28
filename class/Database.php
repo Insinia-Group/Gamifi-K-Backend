@@ -320,11 +320,17 @@ class Database
 
     public function updateInsinia($idRanking, $idUserModified, $points, $insinia, $idUserClient, $isModerator)
     {
+
+
+
         $query = $this->mysql->prepare("SELECT `insiniaPoints` as puntos FROM `RankingUser` WHERE idRanking = ? AND idUser = ?;");
         $query->bind_param('ii', $idRanking, $idUserClient);
         $query->execute();
         $result = $query->get_result();
         $puntos = $result->fetch_assoc()['puntos'];
+
+
+
         $puntosMenosCliente = $puntos - $points;
         if ($isModerator == true) {
             $query = $this->mysql->prepare("UPDATE User SET $insinia= ? WHERE id = ?");
@@ -346,6 +352,12 @@ class Database
             $query2->bind_param('iii', $puntosMenosCliente, $idRanking, $idUserClient);
             $query2->execute();
         }
+        $now = date("Y-m-d");
+        $query3 = $this->mysql->prepare("INSERT INTO `historial`(`evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`, `fecha`) VALUES (?,?,?,?,?,?)");
+        $query3->bind_param('iiiiss', $idUserModified, $idUserClient, $idRanking, $points, $insinia, $now);
+        $query3->execute();
+        $result = $query3->get_result();
+        print_r($result);
     }
 
     public function updateProfile($profile, $id)
