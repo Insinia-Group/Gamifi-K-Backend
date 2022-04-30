@@ -386,4 +386,37 @@ class Database
             return true;
         }
     }
+
+    public function getHistory($id)
+    {
+        $query = $this->mysql->prepare("SELECT `id`, `evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`, `fecha` FROM `historial` WHERE ranking IN (SELECT idRanking FROM RankingUser where role = 'moderator' && idUser = ?)");
+        $query->bind_param('i', $id);
+        $query->execute();
+        $response = [];
+        $result = $query->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $obj = new stdClass();
+            $obj->idHistory = $row['id'];
+            $obj->idEvaluado = $row['evaluado'];
+            $obj->idEvaluador = $row['evaludaor'];
+            $obj->idRanking = $row['ranking'];
+            $obj->Puntos = $row['puntos'];
+
+            $subQuery = $this->mysql->prepare("SELECT u.name AS evaluador, t.name AS evaluado, r.name AS rankingName FROM User u, historial h, Ranking r JOIN User t WHERE (u.id = ? AND h.evaluado = ?) AND(t.id = ? AND h.evaluador = ?) AND r.id = ? AND h.id = ? ");
+            $subQuery->bind_param('iiiiii', $row['evaluado'], $row['evaluado'], $row['evaludaor'], $row['evaludaor'], $row['ranking'], $row['id']);
+            $subQuery->execute();
+            $result2 = $subQuery->get_result();
+            $obj->rankingData = [];
+            while ($row2 = $result2->fetch_assoc()) {
+                $obj->historyData = new stdClass();
+                $obj->historyData->Evaluador = $row2['evaluador'];
+                $obj->historyData->Evaluado = $row2['evaluado'];
+                $obj->historyData->Ranking = $row2['rankingName'];
+                $obj->historyData->Puntos = $row['puntos'];
+                array_push($obj->rankingData, $obj->rankingLast);
+            }
+            array_push($response, $obj);
+        }
+        print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
 }
