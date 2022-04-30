@@ -27,3 +27,4 @@ post('/addRankingByCode', 'post/addRankingByCode.php');
 post('/updateData', 'post/updateData.php');
 post('/updateInsinia', 'post/updateInsinia.php');
 post('/validateEmail', 'post/validateEmail.php');
+post('/revertHistory', 'post/revertHistory.php');

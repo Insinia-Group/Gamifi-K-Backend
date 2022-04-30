@@ -389,7 +389,7 @@ class Database
 
     public function getHistory($id)
     {
-        $query = $this->mysql->prepare("SELECT `id`, `evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`, `fecha` FROM `historial` WHERE ranking IN (SELECT idRanking FROM RankingUser where role = 'moderator' && idUser = ?)");
+        $query = $this->mysql->prepare("SELECT `id`, `evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`, `fecha` FROM `historial` WHERE ranking IN (SELECT idRanking FROM RankingUser where role = 'moderator' && idUser = ?) ORDER BY fecha DESC");
         $query->bind_param('i', $id);
         $query->execute();
         $response = [];
@@ -398,25 +398,44 @@ class Database
             $obj = new stdClass();
             $obj->idHistory = $row['id'];
             $obj->idEvaluado = $row['evaluado'];
-            $obj->idEvaluador = $row['evaludaor'];
+            $obj->idEvaluador = $row['evaluador'];
             $obj->idRanking = $row['ranking'];
             $obj->Puntos = $row['puntos'];
+            $obj->Insinia = $row['insinia'];
+            $obj->Fecha = $row['fecha'];
 
-            $subQuery = $this->mysql->prepare("SELECT u.name AS evaluador, t.name AS evaluado, r.name AS rankingName FROM User u, historial h, Ranking r JOIN User t WHERE (u.id = ? AND h.evaluado = ?) AND(t.id = ? AND h.evaluador = ?) AND r.id = ? AND h.id = ? ");
-            $subQuery->bind_param('iiiiii', $row['evaluado'], $row['evaluado'], $row['evaludaor'], $row['evaludaor'], $row['ranking'], $row['id']);
+            $subQuery = $this->mysql->prepare("SELECT u.name AS evaluadorN, u.lastName AS evaluadorA , t.name AS evaluadoN, t.lastName AS evaluadoA, r.name AS rankingName  FROM User u, historial h, Ranking r JOIN User t WHERE (u.id = ? AND h.evaluado = ?) AND(t.id = ? AND h.evaluador = ?) AND r.id = ? AND h.id = ? ");
+            $subQuery->bind_param('iiiiii', $obj->idEvaluado, $obj->idEvaluado,$obj->idEvaluador, $obj->idEvaluador, $obj->idRanking, $obj->idHistory);
             $subQuery->execute();
             $result2 = $subQuery->get_result();
-            $obj->rankingData = [];
+            $obj->mainData = [];
             while ($row2 = $result2->fetch_assoc()) {
                 $obj->historyData = new stdClass();
-                $obj->historyData->Evaluador = $row2['evaluador'];
-                $obj->historyData->Evaluado = $row2['evaluado'];
+                $obj->historyData->Evaluador = $row2['evaluadorN'] . " " . $row2['evaluadorA'] ;
+                $obj->historyData->Evaluado = $row2['evaluadoN']. " " . $row2['evaluadoA'];
                 $obj->historyData->Ranking = $row2['rankingName'];
                 $obj->historyData->Puntos = $row['puntos'];
-                array_push($obj->rankingData, $obj->rankingLast);
+                $obj->historyData->Insinia =  $obj->Insinia;
+                $obj->historyData->Fecha =   $obj->Fecha;
+                $obj->historyData->idHistory =   $obj->idHistory;
+                $obj->historyData->idEvaluado =   $obj->idEvaluado;
+
+                array_push($obj->mainData, $obj->historyData);
             }
-            array_push($response, $obj);
+            array_push($response, $obj->historyData);
         }
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
+
+    public function  revertHistory($idHistory,$idUser,$puntos,$insinia)
+    {
+        $query = $this->mysql->prepare("UPDATE `User` SET $insinia= $insinia-? WHERE id = ? ");
+        $query->bind_param('ii', $puntos,$idUser);
+        $query->execute();
+
+        $query = $this->mysql->prepare("DELETE FROM `historial` WHERE id = ? ");
+        $query->bind_param('i', $idHistory);
+        $query->execute();
+        
     }
 }
