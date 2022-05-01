@@ -141,7 +141,7 @@ class Database
      * getRankingByUser - Genera json con los rankings por usuraio con un sub json que contiene los usuarios con su puntuacion para cada ranking 
      */
 
-    public function getRankingsByUser($idUser)
+  public function getRankingsByUser($idUser)
     {
         $query = $this->mysql->prepare("SELECT * FROM `Ranking` WHERE id in (SELECT idRanking from RankingUser WHERE idUser = ? AND role = 'user')");
         $query->bind_param('i', $idUser);
@@ -150,11 +150,18 @@ class Database
         $response2 = [];
         $result = $query->get_result();
         while ($row = $result->fetch_assoc()) {
+            $query2 = $this->mysql->prepare("SELECT insiniaPoints FROM `RankingUser` WHERE idUser = ? AND idRanking = ? AND role = 'user'");
+            $query2->bind_param('ii', $idUser,$row['id']);
+            $query2->execute();
+            $result2 = $query2->get_result();
+            $row2 = $result2->fetch_assoc();
+
             $obj = new stdClass();
             $obj->rankingData = new stdClass();
             $obj->id = $row['id'];
             $obj->name = $row['name'];
             $obj->description = $row['description'];
+            $obj->insiniaPoints = $row2['insiniaPoints'];
             $obj->logo = fixingBlob($row['logo']);
             $subQuery = $this->mysql->prepare("SELECT b.name,b.lastName,b.id as idUser,b.Responsabilidad,b.Cooperacion,b.Autonomia,b.Emocional,b.Inteligencia, c.id, a.points FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser =?) AND c.id = ? ORDER BY a.points DESC");
             $subQuery->bind_param('ii', $idUser, $obj->id);
@@ -181,6 +188,7 @@ class Database
         }
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
+
 
     /*
      * Obtenemos los rankings en los que el usuario es moderador
@@ -352,7 +360,7 @@ class Database
             $query2->bind_param('iii', $puntosMenosCliente, $idRanking, $idUserClient);
             $query2->execute();
         }
-        $now = date("Y-m-d");
+        $now = date("Y-m-d H:i:s");
         $query3 = $this->mysql->prepare("INSERT INTO `historial`(`evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`, `fecha`) VALUES (?,?,?,?,?,?)");
         $query3->bind_param('iiiiss', $idUserModified, $idUserClient, $idRanking, $points, $insinia, $now);
         $query3->execute();
@@ -404,7 +412,7 @@ class Database
             $obj->Insinia = $row['insinia'];
             $obj->Fecha = $row['fecha'];
 
-            $subQuery = $this->mysql->prepare("SELECT u.name AS evaluadorN, u.lastName AS evaluadorA , t.name AS evaluadoN, t.lastName AS evaluadoA, r.name AS rankingName  FROM User u, historial h, Ranking r JOIN User t WHERE (u.id = ? AND h.evaluado = ?) AND(t.id = ? AND h.evaluador = ?) AND r.id = ? AND h.id = ? ");
+            $subQuery = $this->mysql->prepare("SELECT u.name AS evaluadoN, u.lastName AS evaluadoA , t.name AS evaluadorN, t.lastName AS evaluadorA, r.name AS rankingName  FROM User u, historial h, Ranking r JOIN User t WHERE (u.id = ? AND h.evaluado = ?) AND(t.id = ? AND h.evaluador = ?) AND r.id = ? AND h.id = ? ");
             $subQuery->bind_param('iiiiii', $obj->idEvaluado, $obj->idEvaluado,$obj->idEvaluador, $obj->idEvaluador, $obj->idRanking, $obj->idHistory);
             $subQuery->execute();
             $result2 = $subQuery->get_result();
@@ -429,7 +437,7 @@ class Database
 
     public function  revertHistory($idHistory,$idUser,$puntos,$insinia)
     {
-        $query = $this->mysql->prepare("UPDATE `User` SET $insinia= $insinia-? WHERE id = ? ");
+        $query = $this->mysql->prepare("UPDATE `User` SET $insinia = $insinia - ? WHERE id = ? ");
         $query->bind_param('ii', $puntos,$idUser);
         $query->execute();
 
