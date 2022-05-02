@@ -8,7 +8,7 @@ $token = getClientToken();
 $decoded = AUTH::decodeToken($token);
 $id = $decoded->data[1];
 try {
-    $database->updateData($validation->id, $validation->idUser, $validation->points);
+    $database->updateData($validation->idRanking, $validation->idUser, $validation->points,$validation->idUserModified,$id,$validation->insinia,$validation->oldValue);
     $response = new stdClass();
     $response->status = true;
     print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));

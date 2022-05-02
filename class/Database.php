@@ -320,14 +320,23 @@ class Database
         $query->execute();
     }
 
-    public function updateData($id, $idUser, $points)
+    public function updateData($idRanking, $idUser, $points,$idUserModified,$idUserClient,$insinia,$oldValue)
     {
         $query = $this->mysql->prepare("UPDATE RankingUser SET points=? WHERE idRanking = ? AND idUser = ?");
-        $query->bind_param('iii', $points, $id, $idUser);
+        $query->bind_param('iii', $points, $idRanking, $idUser);
         $query->execute();
+
+
+
+        $now = date("Y-m-d H:i:s");
+        $query3 = $this->mysql->prepare("INSERT INTO `historial`(`evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`,`oldValue`, `fecha`) VALUES (?,?,?,?,?,?,?)");
+        $query3->bind_param('iiiisis', $idUserModified, $idUserClient, $idRanking, $points, $insinia,$oldValue, $now);
+        $query3->execute();
+        $result = $query3->get_result();
+        print_r($result);
     }
 
-    public function updateInsinia($idRanking, $idUserModified, $points, $insinia, $idUserClient, $isModerator)
+    public function updateInsinia($idRanking, $idUserModified, $points, $insinia, $idUserClient, $isModerator,$oldValue)
     {
 
 
@@ -362,8 +371,8 @@ class Database
             $query2->execute();
         }
         $now = date("Y-m-d H:i:s");
-        $query3 = $this->mysql->prepare("INSERT INTO `historial`(`evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`, `fecha`) VALUES (?,?,?,?,?,?)");
-        $query3->bind_param('iiiiss', $idUserModified, $idUserClient, $idRanking, $points, $insinia, $now);
+        $query3 = $this->mysql->prepare("INSERT INTO `historial`(`evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`,`oldValue`, `fecha`) VALUES (?,?,?,?,?,?,?)");
+        $query3->bind_param('iiiisis', $idUserModified, $idUserClient, $idRanking, $points, $insinia, $oldValue, $now);
         $query3->execute();
         $result = $query3->get_result();
         print_r($result);
@@ -398,7 +407,7 @@ class Database
 
     public function getHistory($id)
     {
-        $query = $this->mysql->prepare("SELECT `id`, `evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`, `fecha` FROM `historial` WHERE ranking IN (SELECT idRanking FROM RankingUser where role = 'moderator' && idUser = ?) ORDER BY fecha DESC");
+        $query = $this->mysql->prepare("SELECT `id`, `evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`,`oldValue`, `fecha` FROM `historial` WHERE ranking IN (SELECT idRanking FROM RankingUser where role = 'moderator' && idUser = ?) ORDER BY fecha DESC");
         $query->bind_param('i', $id);
         $query->execute();
         $response = [];
@@ -424,6 +433,8 @@ class Database
                 $obj->historyData->Evaluado = $row2['evaluadoN']. " " . $row2['evaluadoA'];
                 $obj->historyData->Ranking = $row2['rankingName'];
                 $obj->historyData->Puntos = $row['puntos'];
+                $obj->historyData->oldValue = $row['oldValue'];
+                $obj->historyData->idRanking = $row['ranking'];
                 $obj->historyData->Insinia =  $obj->Insinia;
                 $obj->historyData->Fecha =   $obj->Fecha;
                 $obj->historyData->idHistory =   $obj->idHistory;
@@ -431,13 +442,35 @@ class Database
 
                 array_push($obj->mainData, $obj->historyData);
             }
+
+            
             array_push($response, $obj->historyData);
         }
+
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
-    public function  revertHistory($idHistory,$idUser,$puntos,$insinia)
+    public function  revertHistory($idHistory,$idUser,$puntos,$insinia,$oldValue,$idRanking,$idUserClient)
     {
+        if($insinia == 'puntos'){
+            $query = $this->mysql->prepare("UPDATE `RankingUser` SET points =  ? WHERE idUser = ? AND idRanking = ?");
+            $query->bind_param('iii', $oldValue,$idUser,$idRanking);
+            $query->execute();
+
+            $query = $this->mysql->prepare("DELETE FROM `historial` WHERE evaluado = ? AND ranking = ?");
+            $query->bind_param('ii', $idUser,$idRanking );
+            $query->execute();
+
+            $now = date("Y-m-d H:i:s");
+            $query3 = $this->mysql->prepare("INSERT INTO `historial`(`evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`,`oldValue`, `fecha`) VALUES (?,?,?,?,?,?,?)");
+            $query3->bind_param('iiiisis', $idUser, $idUserClient, $idRanking, $puntos, $insinia,$oldValue, $now);
+            $query3->execute();
+            $result = $query3->get_result();
+
+
+        }
+        else{
+
         $query = $this->mysql->prepare("UPDATE `User` SET $insinia = $insinia - ? WHERE id = ? ");
         $query->bind_param('ii', $puntos,$idUser);
         $query->execute();
@@ -445,6 +478,8 @@ class Database
         $query = $this->mysql->prepare("DELETE FROM `historial` WHERE id = ? ");
         $query->bind_param('i', $idHistory);
         $query->execute();
-        
+    }
+
+       
     }
 }
