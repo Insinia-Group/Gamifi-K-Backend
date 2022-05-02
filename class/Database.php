@@ -83,7 +83,7 @@ class Database
     public function register($nick, $userName, $lastUserName, $email, $description, $password, $dateBirth, $role, $dateJoined, $status)
     {
         try {
-            $query = $this->mysql->prepare("INSERT INTO User ( `nick`, `name`, `lastName`, `email`, `description`, `password`, `dateBirth`, `role`, `dateJoined`, `status`)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $query = $this->mysql->prepare("INSERT INTO `User` ( `nick`, `name`, `lastName`, `email`, `description`, `password`, `dateBirth`, `role`, `dateJoined`, `status`)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $query->bind_param('sssssssssi', $nick, $userName, $lastUserName, $email, $description, $password, $dateBirth, $role, $dateJoined, $status);
             $query->execute();
             $result = $query->get_result();
@@ -92,6 +92,7 @@ class Database
         }
     }
 
+    
     /**
      * getTest - Printa la tabla test de la BBDD.
      */

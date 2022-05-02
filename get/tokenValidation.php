@@ -16,6 +16,7 @@ try {
         $isExpired = AUTH::isExpired($timeExpiration);
         $isAdmin = $database->isAdmin($email);
         $obj = new stdClass();
+        $obj->isValid = false;
 
         if (AUTH::isExpired($timeExpiration)) {
             $obj->isValid = false;
@@ -26,6 +27,5 @@ try {
         }
     }
 } catch (Exception $error) {
-    $obj->isValid = false;
     echo $error;
 }
