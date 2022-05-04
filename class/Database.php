@@ -313,6 +313,7 @@ class Database
             return $error;
         }
     }
+    
     public function updateAvatarById($image, $idUser)
     {
         $query = $this->mysql->prepare("UPDATE `User` SET `avatar`= ? WHERE id = ?");
@@ -325,9 +326,6 @@ class Database
         $query = $this->mysql->prepare("UPDATE RankingUser SET points=? WHERE idRanking = ? AND idUser = ?");
         $query->bind_param('iii', $points, $idRanking, $idUser);
         $query->execute();
-
-
-
         $now = date("Y-m-d H:i:s");
         $query3 = $this->mysql->prepare("INSERT INTO `historial`(`evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`,`oldValue`, `fecha`) VALUES (?,?,?,?,?,?,?)");
         $query3->bind_param('iiiisis', $idUserModified, $idUserClient, $idRanking, $points, $insinia, $oldValue, $now);
@@ -336,11 +334,27 @@ class Database
         print_r($result);
     }
 
+    public function insertRanking($ranking)
+    {
+        $query = $this->mysql->prepare("INSERT INTO `Ranking`(`name`, `description`, `logo`, `joinCode`) VALUES (?, ?, ?, ?)");
+        $query->bind_param('ssss', $ranking->name, $ranking->description, $ranking->image, $ranking->code);
+        $query->execute();
+        $rankingId = $this->mysql->insert_id;
+        $query = $this->mysql->prepare("INSERT INTO `RankingUser`(`idRanking`, `idUser`, `points`, `favourite`, `role`, `insiniaPoints`) VALUES (?, ?, ?, ?, ?)");
+        $query->bind_param('iiiisi', $rankingId, $ranking->idUser, 0, 0, 'moderator', 0);
+        $query->execute();
+    }
+
+    public function codeExists($code)
+    {
+        $query = $this->mysql->prepare("SELECT `joinCode` FROM `Ranking` WHERE `joinCode` = ?");
+        $query->bind_param('s', $code);
+        $query->execute();
+        $result = $query->get_result();
+    }
+
     public function updateInsinia($idRanking, $idUserModified, $points, $insinia, $idUserClient, $isModerator, $oldValue)
     {
-
-
-
         $query = $this->mysql->prepare("SELECT `insiniaPoints` as puntos FROM `RankingUser` WHERE idRanking = ? AND idUser = ?;");
         $query->bind_param('ii', $idRanking, $idUserClient);
         $query->execute();
