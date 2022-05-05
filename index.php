@@ -15,7 +15,7 @@ get('/rankingById', 'get/rankingsById.php');
 get('/rankingsOfModerator', 'get/rankingsOfModerator.php');
 get('/tokenValidation', 'get/tokenValidation.php');
 get('/history', 'get/history.php');
-
+get('/exist/$code', 'get/code.php');
 
 /* POSTs */
 post('/login', 'post/login.php');
