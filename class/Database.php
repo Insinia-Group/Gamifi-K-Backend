@@ -313,7 +313,7 @@ class Database
             return $error;
         }
     }
-    
+
     public function updateAvatarById($image, $idUser)
     {
         $query = $this->mysql->prepare("UPDATE `User` SET `avatar`= ? WHERE id = ?");
@@ -336,21 +336,34 @@ class Database
 
     public function insertRanking($ranking)
     {
-        $query = $this->mysql->prepare("INSERT INTO `Ranking`(`name`, `description`, `logo`, `joinCode`) VALUES (?, ?, ?, ?)");
-        $query->bind_param('ssss', $ranking->name, $ranking->description, $ranking->image, $ranking->code);
-        $query->execute();
-        $rankingId = $this->mysql->insert_id;
-        $query = $this->mysql->prepare("INSERT INTO `RankingUser`(`idRanking`, `idUser`, `points`, `favourite`, `role`, `insiniaPoints`) VALUES (?, ?, ?, ?, ?)");
-        $query->bind_param('iiiisi', $rankingId, $ranking->idUser, 0, 0, 'moderator', 0);
-        $query->execute();
+        $exist = $this->codeExists($ranking->code);
+        $response = new stdClass();
+        $response->done = false;
+        if ($exist == 0) {
+            $query = $this->mysql->prepare("INSERT INTO `Ranking`(`name`, `description`, `logo`, `joinCode`) VALUES (?, ?, ?, ?)");
+            $query->bind_param('ssss', $ranking->name, $ranking->description, $ranking->image, $ranking->code);
+            $query->execute();
+            $rankingId = $this->mysql->insert_id;
+            $query = $this->mysql->prepare("INSERT INTO `RankingUser`(`idRanking`, `idUser`, `points`, `favourite`, `role`, `insiniaPoints`) VALUES (?, ?, 0, 0, 'moderator', 0)");
+            $query->bind_param('ii', $rankingId, $ranking->idUser);
+            $query->execute();
+            $response->done = true;
+        }
+        return $response;
     }
 
     public function codeExists($code)
     {
-        $query = $this->mysql->prepare("SELECT `joinCode` FROM `Ranking` WHERE `joinCode` = ?");
+        $response = new stdClass();
+        $response->queryExists = false;
+        $query = $this->mysql->prepare("SELECT id FROM `Ranking` WHERE `joinCode` = ? LIMIT 1");
         $query->bind_param('s', $code);
         $query->execute();
         $result = $query->get_result();
+        if ($result->num_rows > 0) {
+            return true;
+        }
+        return false;
     }
 
     public function updateInsinia($idRanking, $idUserModified, $points, $insinia, $idUserClient, $isModerator, $oldValue)
