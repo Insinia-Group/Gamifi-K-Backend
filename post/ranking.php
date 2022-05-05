@@ -7,7 +7,7 @@ $validation = parse();
 $token = getClientToken();
 $decoded = AUTH::decodeToken($token);
 $id = $decoded->data[1];
-$validation['idUser'] = $id;
+$validation -> idUser = $id;
 try {
     $response = $database->insertRanking($validation);
     print_r(json_encode($response));
