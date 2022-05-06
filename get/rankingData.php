@@ -11,15 +11,8 @@ try {
     $timeExpiration = $decoded->exp;
     $isExpired = AUTH::isExpired($timeExpiration);
     $isAdmin = $database->isAdmin($email);
-    if (!$isExpired && $isAdmin) {
-        json_encode($database->getRankings());
-    } else if (!$isExpired && !$isAdmin) {
-        json_encode($database->getRankingData($id));
-    } else if (AUTH::isExpired($timeExpiration)) {
-        print_r(json_encode($database->responseError(403, 'Your token access is expired.')));
-    } else if (!$isAdmin) {
-        print_r(json_encode($database->responseError(403, 'You are not allowed for this action.')));
-    }
+    $validation = parse();
+    json_encode($database->getRankingData($validation->rankingId, $id));
 } catch (Exception $error) {
     print_r($error);
 }

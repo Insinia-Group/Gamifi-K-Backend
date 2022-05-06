@@ -256,24 +256,44 @@ class Database
      * getRankingData - Obtiene los datos de cada ranking
      */
 
-    public function getRankingData($idUser)
+    public function getRankingData($idRanking, $idUser)
     {
-        $query = $this->mysql->prepare("SELECT b.nick,b.id as idUser, c.name,c.id, a.points FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser = ?) ORDER BY c.name;");
-        $query->bind_param('i', $idUser);
+
+
+        $query = $this->mysql->prepare("SELECT b.name,b.lastName,b.id as idUser,b.Responsabilidad,b.Cooperacion,b.Autonomia,b.Emocional,b.Inteligencia, c.id, a.points,a.role FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser =?) AND c.id = ?  ORDER BY a.points DESC");
+        $query->bind_param('ii', $idUser, $idRanking);
         $query->execute();
-        $response = [];
         $result = $query->get_result();
+        $response = [];
+        $isModerator = false;
+
+
         while ($row = $result->fetch_assoc()) {
             $obj = new stdClass();
-            $obj->Usuarios = $row['nick'];
-            $obj->Ranking = $row['name'];
-            $obj->id = $row['id'];
-            $obj->idUser = $row['idUser'];
-            $obj->Puntos = $row['points'];
 
-            // $obj->points = $row['points'];
+            if ($row['role'] == 'moderator' && $row['idUser'] == $idUser) {
+                $isModerator = true;
+            } else {
+                $obj->role = $row['role'];
+                $obj->Nombre = $row['name'];
+                $obj->Apellido = $row['lastName'];
+                $obj->idUser = $row['idUser'];
+                $obj->id = $row['id'];
+                $obj->Responsabilidad = $row['Responsabilidad'];
+                $obj->Cooperacion = $row['Cooperacion'];
+                $obj->Autonomia = $row['Autonomia'];
+                $obj->Emocional = $row['Emocional'];
+                $obj->Inteligencia = $row['Inteligencia'];
+                $obj->Puntos = $row['points'];
+            }
             array_push($response, $obj);
         }
+        $rankings = new stdClass();
+
+        $rankings->moderator = $isModerator;
+        $rankings->response =  $response;
+
+
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
