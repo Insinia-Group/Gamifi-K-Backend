@@ -144,14 +144,14 @@ class Database
 
     public function getRankingsByUser($idUser)
     {
-        $query = $this->mysql->prepare("SELECT * FROM `Ranking` WHERE id in (SELECT idRanking from RankingUser WHERE idUser = ? AND role = 'user')");
+        $query = $this->mysql->prepare("SELECT * FROM `Ranking` WHERE id in (SELECT idRanking from RankingUser WHERE idUser = ?)");
         $query->bind_param('i', $idUser);
         $query->execute();
         $response = [];
         $response2 = [];
         $result = $query->get_result();
         while ($row = $result->fetch_assoc()) {
-            $query2 = $this->mysql->prepare("SELECT insiniaPoints FROM `RankingUser` WHERE idUser = ? AND idRanking = ? AND role = 'user'");
+            $query2 = $this->mysql->prepare("SELECT insiniaPoints FROM `RankingUser` WHERE idUser = ? AND idRanking = ? ");
             $query2->bind_param('ii', $idUser, $row['id']);
             $query2->execute();
             $result2 = $query2->get_result();
@@ -273,7 +273,8 @@ class Database
 
             if ($row['role'] == 'moderator' && $row['idUser'] == $idUser) {
                 $isModerator = true;
-            } else {
+            } 
+            
                 $obj->role = $row['role'];
                 $obj->Nombre = $row['name'];
                 $obj->Apellido = $row['lastName'];
@@ -285,7 +286,7 @@ class Database
                 $obj->Emocional = $row['Emocional'];
                 $obj->Inteligencia = $row['Inteligencia'];
                 $obj->Puntos = $row['points'];
-            }
+            
             array_push($response, $obj);
         }
         $rankings = new stdClass();
@@ -294,7 +295,7 @@ class Database
         $rankings->response =  $response;
 
 
-        print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        print_r(json_encode($rankings, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
     public function getProfile($id)
@@ -386,16 +387,16 @@ class Database
         return false;
     }
 
-    public function updateInsinia($idRanking, $idUserModified, $points, $insinia, $idUserClient, $isModerator, $oldValue)
+    public function updateInsinia($idRanking, $idUserModified, $points, $insinia, $idUserClient,  $oldValue)
     {
-        $query = $this->mysql->prepare("SELECT `insiniaPoints` as puntos FROM `RankingUser` WHERE idRanking = ? AND idUser = ?;");
+        $query = $this->mysql->prepare("SELECT `insiniaPoints` as puntos FROM `RankingUser` WHERE idRanking = ? AND idUser = ?");
         $query->bind_param('ii', $idRanking, $idUserClient);
         $query->execute();
         $result = $query->get_result();
         $puntos = $result->fetch_assoc()['puntos'];
         $puntosMenosCliente = $puntos - $points;
 
-        if ($isModerator == false && $puntosMenosCliente < 0 || $points < 0) {
+        if ($puntosMenosCliente < 0 || $points < 0) {
             print_r($puntosMenosCliente);
             return false;
         } else {
