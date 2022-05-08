@@ -29,4 +29,3 @@ post('/updateInsinia', 'post/updateInsinia.php');
 post('/validateEmail', 'post/validateEmail.php');
 post('/revertHistory', 'post/revertHistory.php');
 post('/rankingData', 'get/rankingData.php');
-

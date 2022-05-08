@@ -172,7 +172,6 @@ class Database
             while ($row2 = $result2->fetch_assoc()) {
                 $obj->rankingLast = new stdClass();
                 $obj->rankingLast->Nombre = $row2['name'];
-                $obj->rankingLast->isModerator = false;
                 $obj->rankingLast->Apellido = $row2['lastName'];
                 $obj->rankingLast->idUser = $row2['idUser'];
                 $obj->rankingLast->id = $row2['id'];
