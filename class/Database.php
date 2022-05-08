@@ -151,12 +151,11 @@ class Database
         $response2 = [];
         $result = $query->get_result();
         while ($row = $result->fetch_assoc()) {
-            $query2 = $this->mysql->prepare("SELECT insiniaPoints FROM `RankingUser` WHERE idUser = ? AND idRanking = ? ");
+            $query2 = $this->mysql->prepare("SELECT `insiniaPoints`,`role` FROM `RankingUser` WHERE idUser = ? AND idRanking = ? ");
             $query2->bind_param('ii', $idUser, $row['id']);
             $query2->execute();
             $result2 = $query2->get_result();
             $row2 = $result2->fetch_assoc();
-
             $obj = new stdClass();
             $obj->rankingData = new stdClass();
             $obj->id = $row['id'];
@@ -273,7 +272,7 @@ class Database
 
             if ($row['role'] == 'moderator' && $row['idUser'] == $idUser) {
                 $isModerator = true;
-            } 
+            } else{
             
                 $obj->role = $row['role'];
                 $obj->Nombre = $row['name'];
@@ -289,6 +288,7 @@ class Database
             
             array_push($response, $obj);
         }
+    }
         $rankings = new stdClass();
 
         $rankings->moderator = $isModerator;
