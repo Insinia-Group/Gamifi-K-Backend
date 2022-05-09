@@ -30,4 +30,5 @@ post('/updateInsinia', 'post/updateInsinia.php');
 post('/validateEmail', 'post/validateEmail.php');
 post('/revertHistory', 'post/revertHistory.php');
 post('/deleteRanking', 'post/deleteRanking.php');
+post('/exitRanking', 'post/exitRanking.php');
 post('/rankingData', 'get/rankingData.php');

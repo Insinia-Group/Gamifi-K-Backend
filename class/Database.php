@@ -546,4 +546,12 @@ class Database
         $query->bind_param('i', $idRanking);
         $query->execute();
     }
+
+    public function exitRanking($idRanking,$idUser)
+    {
+        $query = $this->mysql->prepare("DELETE FROM `RankingUser` WHERE idRanking = ? AND idUser = ?");
+        $query->bind_param('ii', $idRanking,$idUser);
+        $query->execute();
+    }
+    
 }

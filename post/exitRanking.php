@@ -1,10 +1,14 @@
 <?php
     include_once('class/Database.php');
+    include_once('class/Auth.php');
     $database = new Database();
     $database->connection();
     $validation = parse();
+    $token = getClientToken();
+    $decoded = AUTH::decodeToken($token);
+    $id = $decoded->data[1];
     try {
-        $response = $database->deleteRanking($validation->idRanking);
+        $response = $database->exitRanking($validation->idRanking,$id);
         print_r(json_encode($response));
     
     } catch (Exception $error) {
