@@ -532,4 +532,18 @@ class Database
             $query->execute();
         }
     }
+
+
+
+    public function deleteRanking($idRanking)
+    {
+        $response = new stdClass();
+        $query = $this->mysql->prepare("DELETE FROM `Ranking` WHERE id = ?");
+        $query->bind_param('i', $idRanking);
+        $query->execute();
+
+        $query = $this->mysql->prepare("DELETE FROM `RankingUser` WHERE idRanking = ?");
+        $query->bind_param('i', $idRanking);
+        $query->execute();
+    }
 }
