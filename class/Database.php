@@ -157,6 +157,11 @@ class Database
             $result2 = $query2->get_result();
             $row2 = $result2->fetch_assoc();
             $obj = new stdClass();
+            if ($row2["role"] == 'moderator') {
+                $obj->role = 'Moderador';
+            } else {
+                $obj->role = 'Participante';
+            }
             $obj->rankingData = new stdClass();
             $obj->id = $row['id'];
             $obj->name = $row['name'];
@@ -271,8 +276,8 @@ class Database
 
             if ($row['role'] == 'moderator' && $row['idUser'] == $idUser) {
                 $isModerator = true;
-            } else{
-            
+            } else {
+
                 $obj->role = $row['role'];
                 $obj->Nombre = $row['name'];
                 $obj->Apellido = $row['lastName'];
@@ -284,10 +289,10 @@ class Database
                 $obj->Emocional = $row['Emocional'];
                 $obj->Inteligencia = $row['Inteligencia'];
                 $obj->Puntos = $row['points'];
-            
-            array_push($response, $obj);
+
+                array_push($response, $obj);
+            }
         }
-    }
         $rankings = new stdClass();
 
         $rankings->moderator = $isModerator;
