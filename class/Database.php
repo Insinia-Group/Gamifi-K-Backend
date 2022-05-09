@@ -247,7 +247,6 @@ class Database
             $query = $this->mysql->prepare("INSERT INTO `RankingUser`(`idRanking`, `idUser`, `points`, `favourite`,`role`) VALUES ((SELECT id from Ranking WHERE joinCode = ? ),?,'0','1','user');");
             $query->bind_param('si', $code, $idUser);
             $query->execute();
-            $result = $query->get_result();
         } catch (Exception $error) {
             return $error;
         }
@@ -375,6 +374,20 @@ class Database
             $response->done = true;
         }
         return $response;
+    }
+
+    public function emailExists($email)
+    {
+        $response = new stdClass();
+        $response->queryExists = false;
+        $query = $this->mysql->prepare("SELECT email FROM `User` WHERE email = ? LIMIT 1");
+        $query->bind_param('s', $email);
+        $query->execute();
+        $result = $query->get_result();
+        if ($result->num_rows > 0) {
+            return true;
+        }
+        return false;
     }
 
     public function codeExists($code)
