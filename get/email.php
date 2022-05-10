@@ -16,12 +16,14 @@ try {
         if (!$isExpired) {
             $response = new stdClass();
             $response->exists = $database->emailExists($email);
+            $response->admin = $database->isAdmin($email);
             print_r(json_encode($response));
             return;
         }
     } else {
         $response = new stdClass();
         $response->exists = $database->emailExists($email);
+        $response->admin = $database->isAdmin($email);
         print_r(json_encode($response));
         return;
     }

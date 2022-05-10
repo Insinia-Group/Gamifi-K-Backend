@@ -116,8 +116,12 @@ class Database
         $query->execute();
         $result = $query->get_result();
         $row = $result->fetch_array(MYSQLI_ASSOC);
-        if ($row['role'] === 'admin') {
-            return true;
+        if ($row) {
+            if ($row['role'] === 'admin') {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -250,6 +254,11 @@ class Database
         } catch (Exception $error) {
             return $error;
         }
+    }
+
+    public function insertUsersToRanking($users, $idRanking)
+    {
+        
     }
 
 
@@ -448,7 +457,6 @@ class Database
 
     public function  validateEmail($email)
     {
-        $response = new stdClass();
         $query = $this->mysql->prepare("SELECT COUNT(*) as COUNTA FROM User WHERE email = ?");
         $query->bind_param('s', $email);
         $query->execute();
@@ -547,11 +555,10 @@ class Database
         $query->execute();
     }
 
-    public function exitRanking($idRanking,$idUser)
+    public function exitRanking($idRanking, $idUser)
     {
         $query = $this->mysql->prepare("DELETE FROM `RankingUser` WHERE idRanking = ? AND idUser = ?");
-        $query->bind_param('ii', $idRanking,$idUser);
+        $query->bind_param('ii', $idRanking, $idUser);
         $query->execute();
     }
-    
 }
