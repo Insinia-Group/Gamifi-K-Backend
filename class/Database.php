@@ -262,19 +262,20 @@ class Database
     {
 
 
-        $query = $this->mysql->prepare("SELECT b.name,b.lastName,b.id as idUser,b.Responsabilidad,b.Cooperacion,b.Autonomia,b.Emocional,b.Inteligencia, c.id, a.points,a.role FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser =?) AND c.id = ?  ORDER BY a.points DESC");
+        $query = $this->mysql->prepare("SELECT b.name,b.lastName,b.id as idUser,b.Responsabilidad,b.Cooperacion,b.Autonomia,b.Emocional,b.Inteligencia, c.id,c.joinCode, a.points,a.role FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser =?) AND c.id = ?  ORDER BY a.points DESC");
         $query->bind_param('ii', $idUser, $idRanking);
         $query->execute();
         $result = $query->get_result();
         $response = [];
         $isModerator = false;
-
+        $joinCode = "";
 
         while ($row = $result->fetch_assoc()) {
             $obj = new stdClass();
 
             if ($row['role'] == 'moderator' && $row['idUser'] == $idUser) {
                 $isModerator = true;
+                $joinCode = $row['joinCode'];
             } else {
 
                 $obj->role = $row['role'];
@@ -294,6 +295,7 @@ class Database
         }
         $rankings = new stdClass();
 
+        $rankings->joinCode = $joinCode;
         $rankings->moderator = $isModerator;
         $rankings->response =  $response;
 
@@ -404,7 +406,7 @@ class Database
         return false;
     }
 
-    public function updateInsinia($idRanking, $idUserModified, $points, $insinia, $idUserClient,  $oldValue)
+    public function updateInsinia($idRanking, $idUserModified, $points, $insinia, $idUserClient,  $oldValue, $isModerator)
     {
         $query = $this->mysql->prepare("SELECT `insiniaPoints` as puntos FROM `RankingUser` WHERE idRanking = ? AND idUser = ?");
         $query->bind_param('ii', $idRanking, $idUserClient);
@@ -413,17 +415,20 @@ class Database
         $puntos = $result->fetch_assoc()['puntos'];
         $puntosMenosCliente = $puntos - $points;
 
-        if ($puntosMenosCliente < 0 || $points < 0) {
-            print_r($puntosMenosCliente);
+        if (!$isModerator && $puntosMenosCliente < 0 || $points < 0) {
             return false;
-        } else {
-            $query = $this->mysql->prepare("UPDATE User SET $insinia=(SELECT $insinia FROM User WHERE id = ?) + ? WHERE id = ?");
-            $query->bind_param('iii', $idUserModified, $points, $idUserModified);
+        } else if (!$isModerator) {
+            $query = $this->mysql->prepare("UPDATE User SET $insinia= $insinia  + ? WHERE id = ?");
+            $query->bind_param('ii', $points, $idUserModified);
             $query->execute();
 
             $query2 = $this->mysql->prepare("UPDATE RankingUser SET insiniaPoints=? WHERE idRanking = ? AND idUser = ?");
             $query2->bind_param('iii', $puntosMenosCliente, $idRanking, $idUserClient);
             $query2->execute();
+        } else if ($isModerator) {
+            $query = $this->mysql->prepare("UPDATE User SET $insinia= ? WHERE id = ?");
+            $query->bind_param('ii', $points, $idUserModified);
+            $query->execute();
         }
         $now = date("Y-m-d H:i:s");
         $query3 = $this->mysql->prepare("INSERT INTO `historial`(`evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`,`oldValue`, `fecha`) VALUES (?,?,?,?,?,?,?)");
@@ -462,7 +467,7 @@ class Database
 
     public function getHistory($id)
     {
-        $query = $this->mysql->prepare("SELECT `id`, `evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`,`oldValue`, `fecha` FROM `historial` WHERE ranking IN (SELECT idRanking FROM RankingUser where role = 'moderator' && idUser = ?) ORDER BY fecha DESC");
+        $query = $this->mysql->prepare("SELECT `id`, `evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`,`oldValue`, `fecha` FROM `historial` WHERE ranking IN (SELECT idRanking FROM RankingUser where idUser = ?) ORDER BY fecha DESC");
         $query->bind_param('i', $id);
         $query->execute();
         $response = [];
@@ -547,11 +552,35 @@ class Database
         $query->execute();
     }
 
-    public function exitRanking($idRanking,$idUser)
+    public function exitRanking($idRanking, $idUser)
     {
         $query = $this->mysql->prepare("DELETE FROM `RankingUser` WHERE idRanking = ? AND idUser = ?");
-        $query->bind_param('ii', $idRanking,$idUser);
+        $query->bind_param('ii', $idRanking, $idUser);
         $query->execute();
     }
-    
+
+
+
+    public function renewJoinCode($idRanking)
+    {
+        $noRepeat = false;
+        while ($noRepeat == false) {
+            $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            $charactersLength = strlen($characters);
+            $randomString = '';
+            for ($i = 0; $i < 5; $i++) {
+                $randomString .= $characters[rand(0, $charactersLength - 1)];
+            }
+            $query = $this->mysql->query("SELECT COUNT(joinCode) as con FROM `Ranking` WHERE joinCode = '$randomString'");
+            $row = $query->fetch_assoc();
+            if ($row["con"] == 0) {
+                $noRepeat = true;
+            }
+        }
+
+
+        $query = $this->mysql->prepare("UPDATE Ranking SET joinCode = '$randomString' WHERE id = ?");
+        $query->bind_param('i', $idRanking);
+        $query->execute();
+    }
 }
