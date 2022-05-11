@@ -89,17 +89,14 @@ class Database
             $result = $query->get_result();
             $row = $result->fetch_array(MYSQLI_ASSOC);
 
-            if($row['mail'] == 0){
+            if ($row['mail'] == 0) {
                 $query = $this->mysql->prepare("INSERT INTO `User` ( `nick`, `name`, `lastName`, `email`, `description`, `password`, `dateBirth`, `role`, `dateJoined`, `status`)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 $query->bind_param('sssssssssi', $nick, $userName, $lastUserName, $email, $description, $password, $dateBirth, $role, $dateJoined, $status);
                 $query->execute();
                 $result = $query->get_result();
-            }else{
+            } else {
                 return false;
             }
-
-
-            
         } catch (Exception $error) {
             return $error;
         }
@@ -129,8 +126,12 @@ class Database
         $query->execute();
         $result = $query->get_result();
         $row = $result->fetch_array(MYSQLI_ASSOC);
-        if ($row['role'] === 'admin') {
-            return true;
+        if ($row) {
+            if ($row['role'] === 'admin') {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -466,7 +467,6 @@ class Database
 
     public function  validateEmail($email)
     {
-        $response = new stdClass();
         $query = $this->mysql->prepare("SELECT COUNT(*) as COUNTA FROM User WHERE email = ?");
         $query->bind_param('s', $email);
         $query->execute();
@@ -572,7 +572,9 @@ class Database
         $query->execute();
     }
 
-
+    public function insertUsersToRanking($users, $idRanking)
+    {
+    }
 
     public function renewJoinCode($idRanking)
     {
