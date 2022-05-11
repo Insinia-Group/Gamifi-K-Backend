@@ -1,4 +1,5 @@
 <?php
+
 include_once('class/Database.php');
 include_once('class/Auth.php');
 $database = new Database();
