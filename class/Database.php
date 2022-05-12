@@ -511,6 +511,14 @@ class Database
     public function insertUsersToRanking($users, $idRanking)
     {
         print_r(json_encode($users));
+        $queryString = "INSERT INTO `RankingUser`(`idRanking`, `idUser`, `points`, `favourite`, `role`, `insiniaPoints`) VALUES ";
+        foreach ($users as $user) {
+            $queryString += "(idUser = $user)";
+        }
+        print_r($queryString);
+        // $query = $this->mysql->prepare("INSERT INTO FROM `RankingUser` WHERE idRanking = ?");
+        // $query->bind_param('ii', $idUser, $idRanking);
+        // $query->execute();
     }
 
     public function getHistory($id)
