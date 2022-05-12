@@ -1,5 +1,5 @@
 <?php
-require_once('configuration.php');
+require_once('dotenv.php');
 session_start();
 
 function get($route, $path_to_include)
