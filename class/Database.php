@@ -246,9 +246,20 @@ class Database
     public function addRankingByCode($code, $idUser)
     {
         try {
+            $query = $this->mysql->prepare("SELECT COUNT(id) as isEmpty FROM `Ranking`  WHERE joinCode = ?");
+            $query->bind_param('s', $code);
+            $query->execute();
+            $result = $query->get_result();
+            $row = $result->fetch_assoc();
+            if($row['isEmpty'] == 0){
+                return false;
+            }else{
+
             $query = $this->mysql->prepare("INSERT INTO `RankingUser`(`idRanking`, `idUser`, `points`, `favourite`,`role`) VALUES ((SELECT id from Ranking WHERE joinCode = ? ),?,'0','1','user');");
             $query->bind_param('si', $code, $idUser);
             $query->execute();
+            return true;
+            }
         } catch (Exception $error) {
             return $error;
         }
