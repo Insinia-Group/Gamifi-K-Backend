@@ -271,6 +271,9 @@ class Database
         $response = [];
         $isModerator = false;
         $joinCode = "";
+        $insiniaPoints = 0;
+        $joinCode="";
+        $isModerator=false;
 
         while ($row = $result->fetch_assoc()) {
             $obj = new stdClass();
