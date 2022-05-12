@@ -290,8 +290,9 @@ class Database
             if ($row['role'] == 'moderator' && $row['idUser'] == $idUser) {
                 $isModerator = true;
                 $joinCode = $row['joinCode'];
+            } elseif ($row['role'] == 'moderator') {
             } else {
-                $insiniaPoints=$row['insiniaPoints'];
+                $insiniaPoints = $row['insiniaPoints'];
 
                 $obj->role = $row['role'];
                 $obj->Nombre = $row['name'];
@@ -569,7 +570,7 @@ class Database
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
-    public function  revertHistory($idHistory, $idUser,$idEvaluador, $puntos, $insinia, $oldValue, $idRanking, $idUserClient)
+    public function  revertHistory($idHistory, $idUser, $idEvaluador, $puntos, $insinia, $oldValue, $idRanking, $idUserClient)
     {
         if ($insinia == 'puntos') {
             $query = $this->mysql->prepare("UPDATE `RankingUser` SET points =  ? WHERE idUser = ? AND idRanking = ?");
@@ -592,7 +593,7 @@ class Database
             $query->execute();
 
             $query = $this->mysql->prepare("UPDATE `RankingUser` SET insiniaPoints = insiniaPoints + ? WHERE idUser = ? AND idRanking = ? ");
-            $query->bind_param('iii', $puntos, $idEvaluador,$idRanking);
+            $query->bind_param('iii', $puntos, $idEvaluador, $idRanking);
             $query->execute();
 
             $query = $this->mysql->prepare("DELETE FROM `historial` WHERE id = ? ");
