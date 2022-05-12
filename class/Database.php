@@ -182,26 +182,14 @@ class Database
             $obj->description = $row['description'];
             $obj->insiniaPoints = $row2['insiniaPoints'];
             $obj->logo = fixingBlob($row['logo']);
+            $obj->idClient = $idUser;
             $subQuery = $this->mysql->prepare("SELECT b.name,b.lastName,b.id as idUser,b.Responsabilidad,b.Cooperacion,b.Autonomia,b.Emocional,b.Inteligencia, c.id, a.points FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser =?) AND c.id = ? AND a.role != 'moderator' ORDER BY a.points DESC");
             $subQuery->bind_param('ii', $idUser, $obj->id);
             $subQuery->execute();
             $result2 = $subQuery->get_result();
             $obj->rankingData = [];
 
-            while ($row2 = $result2->fetch_assoc()) {
-                $obj->rankingLast = new stdClass();
-                $obj->rankingLast->Nombre = $row2['name'];
-                $obj->rankingLast->Apellido = $row2['lastName'];
-                $obj->rankingLast->idUser = $row2['idUser'];
-                $obj->rankingLast->id = $row2['id'];
-                $obj->rankingLast->Responsabilidad = $row2['Responsabilidad'];
-                $obj->rankingLast->Cooperacion = $row2['Cooperacion'];
-                $obj->rankingLast->Autonomia = $row2['Autonomia'];
-                $obj->rankingLast->Emocional = $row2['Emocional'];
-                $obj->rankingLast->Inteligencia = $row2['Inteligencia'];
-                $obj->rankingLast->Puntos = $row2['points'];
-                array_push($obj->rankingData, $obj->rankingLast);
-            }
+          
             array_push($response, $obj);
         }
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
