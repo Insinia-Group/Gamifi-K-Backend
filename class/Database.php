@@ -325,22 +325,21 @@ class Database
         $query = $this->mysql->prepare("Select id, nick, name, lastName, email, description, dateBirth, avatar, role, dateJoined, status FROM User WHERE id = ?");
         $query->bind_param('i', $id);
         $query->execute();
-        $response = [];
+        $response = new stdClass();;
         $result = $query->get_result();
         while ($row = $result->fetch_assoc()) {
-            $obj = new stdClass();
-            $obj->id = $row['id'];
-            $obj->nick = $row['nick'];
-            $obj->name = $row['name'];
-            $obj->lastName = $row['lastName'];
-            $obj->email = $row['email'];
-            $obj->description = $row['description'];
-            $obj->dateBirth = $row['dateBirth'];
-            $obj->avatar = fixingBlob($row['avatar']);
-            $obj->role = $row['role'];
-            $obj->dateJoined = $row['dateJoined'];
-            $obj->status = $row['status'];
-            array_push($response, $obj);
+            $response = new stdClass();
+            $response->id = $row['id'];
+            $response->nick = $row['nick'];
+            $response->name = $row['name'];
+            $response->lastName = $row['lastName'];
+            $response->email = $row['email'];
+            $response->description = $row['description'];
+            $response->dateBirth = $row['dateBirth'];
+            $response->avatar = fixingBlob($row['avatar']);
+            $response->role = $row['role'];
+            $response->dateJoined = $row['dateJoined'];
+            $response->status = $row['status'];
         };
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
