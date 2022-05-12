@@ -34,7 +34,7 @@ post('/exitRanking', 'post/exitRanking.php');
 post('/rankingData', 'get/rankingData.php');
 post('/renewJoinCode', 'post/renewJoinCode.php');
 post('/getRankingUsersById', 'post/getRankingUsersById.php');
-post('/addRankingByCode', 'post/addRankingByCode.php');
+post('/addUsersToRanking', 'post/addUsersToRanking.php');
 
 /* DELETE */
 
