@@ -290,6 +290,7 @@ class Database
             if ($row['role'] == 'moderator' && $row['idUser'] == $idUser) {
                 $isModerator = true;
                 $joinCode = $row['joinCode'];
+            } elseif ($row['role'] == 'moderator') {
             } else {
                 $insiniaPoints = $row['insiniaPoints'];
 
