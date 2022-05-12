@@ -276,7 +276,7 @@ class Database
     {
 
 
-        $query = $this->mysql->prepare("SELECT b.name,b.lastName,b.id as idUser,b.Responsabilidad,b.Cooperacion,b.Autonomia,b.Emocional,b.Inteligencia, c.id,c.joinCode, a.points,a.role FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser =?) AND c.id = ?  ORDER BY a.points DESC");
+        $query = $this->mysql->prepare("SELECT b.name,b.lastName,b.id as idUser,b.Responsabilidad,b.Cooperacion,b.Autonomia,b.Emocional,b.Inteligencia, c.id,c.joinCode, a.points,a.role,a.insiniaPoints FROM RankingUser a INNER JOIN User b ON a.idUser = b.id INNER JOIN Ranking c ON a.idRanking = c.id AND a.idRanking IN (SELECT idRanking from RankingUser where idUser =?) AND c.id = ?  ORDER BY a.points DESC");
         $query->bind_param('ii', $idUser, $idRanking);
         $query->execute();
         $result = $query->get_result();
@@ -291,6 +291,7 @@ class Database
                 $isModerator = true;
                 $joinCode = $row['joinCode'];
             } else {
+                $insiniaPoints=$row['insiniaPoints'];
 
                 $obj->role = $row['role'];
                 $obj->Nombre = $row['name'];
@@ -309,6 +310,7 @@ class Database
         }
         $rankings = new stdClass();
 
+        $rankings->insiniaPoints = $insiniaPoints;
         $rankings->joinCode = $joinCode;
         $rankings->moderator = $isModerator;
         $rankings->response =  $response;
@@ -555,6 +557,7 @@ class Database
                 $obj->historyData->Fecha =   $obj->Fecha;
                 $obj->historyData->idHistory =   $obj->idHistory;
                 $obj->historyData->idEvaluado =   $obj->idEvaluado;
+                $obj->historyData->idEvaluador =   $obj->idEvaluador;
 
                 array_push($obj->mainData, $obj->historyData);
             }
@@ -566,7 +569,7 @@ class Database
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
-    public function  revertHistory($idHistory, $idUser, $puntos, $insinia, $oldValue, $idRanking, $idUserClient)
+    public function  revertHistory($idHistory, $idUser,$idEvaluador, $puntos, $insinia, $oldValue, $idRanking, $idUserClient)
     {
         if ($insinia == 'puntos') {
             $query = $this->mysql->prepare("UPDATE `RankingUser` SET points =  ? WHERE idUser = ? AND idRanking = ?");
@@ -586,6 +589,10 @@ class Database
 
             $query = $this->mysql->prepare("UPDATE `User` SET $insinia = $insinia - ? WHERE id = ? ");
             $query->bind_param('ii', $puntos, $idUser);
+            $query->execute();
+
+            $query = $this->mysql->prepare("UPDATE `RankingUser` SET insiniaPoints = insiniaPoints + ? WHERE idUser = ? AND idRanking = ? ");
+            $query->bind_param('iii', $puntos, $idEvaluador,$idRanking);
             $query->execute();
 
             $query = $this->mysql->prepare("DELETE FROM `historial` WHERE id = ? ");
