@@ -478,6 +478,41 @@ class Database
         }
     }
 
+    public function getUsersByRanking($id)
+    {
+        $query = $this->mysql->prepare("SELECT u.email FROM RankingUser r JOIN User u WHERE idRanking = ? AND r.role <> 'moderator' AND r.idUser = u.id;");
+        $query->bind_param('i', $id);
+        $query->execute();
+        $result = $query->get_result();
+        $response = [];
+        while ($row = $result->fetch_assoc()) {
+            array_push($response, $row['email']);
+        }
+        print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
+
+    public function getUserByEmail($email)
+    {
+        $query = $this->mysql->prepare("SELECT id, email FROM User WHERE email = ?");
+        $query->bind_param('s', $email);
+        $query->execute();
+        $result = $query->get_result();
+        $row = $result->fetch_array(MYSQLI_ASSOC);
+        return $row;
+    }
+
+    public function deleteUserFromRanking($idUser, $idRanking)
+    {
+        $query = $this->mysql->prepare("DELETE FROM `RankingUser` WHERE  idUser = ? AND idRanking = ?");
+        $query->bind_param('ii', $idUser, $idRanking);
+        $query->execute();
+    }
+
+    public function insertUsersToRanking($users, $idRanking)
+    {
+        print_r(json_encode($users));
+    }
+
     public function getHistory($id)
     {
         $query = $this->mysql->prepare("SELECT `id`, `evaluado`, `evaluador`, `ranking`, `puntos`, `insinia`,`oldValue`, `fecha` FROM `historial` WHERE ranking IN (SELECT idRanking FROM RankingUser where idUser = ?) ORDER BY fecha DESC");
@@ -572,9 +607,7 @@ class Database
         $query->execute();
     }
 
-    public function insertUsersToRanking($users, $idRanking)
-    {
-    }
+
 
     public function renewJoinCode($idRanking)
     {
