@@ -291,7 +291,7 @@ class Database
                 $isModerator = true;
                 $joinCode = $row['joinCode'];
             } else {
-                $insiniaPoints=$row['insiniaPoints'];
+                $insiniaPoints = $row['insiniaPoints'];
 
                 $obj->role = $row['role'];
                 $obj->Nombre = $row['name'];
@@ -396,8 +396,6 @@ class Database
 
     public function emailExists($email)
     {
-        $response = new stdClass();
-        $response->queryExists = false;
         $query = $this->mysql->prepare("SELECT email FROM `User` WHERE email = ? LIMIT 1");
         $query->bind_param('s', $email);
         $query->execute();
@@ -512,15 +510,16 @@ class Database
 
     public function insertUsersToRanking($users, $idRanking)
     {
-        print_r(json_encode($users));
         $queryString = "INSERT INTO `RankingUser`(`idRanking`, `idUser`, `points`, `favourite`, `role`, `insiniaPoints`) VALUES ";
         foreach ($users as $user) {
-            $queryString += "(idUser = $user)";
-        }
-        print_r($queryString);
-        // $query = $this->mysql->prepare("INSERT INTO FROM `RankingUser` WHERE idRanking = ?");
-        // $query->bind_param('ii', $idUser, $idRanking);
-        // $query->execute();
+            $value = "($idRanking, $user, 0, 0, 'user', 1000) ";
+            $queryString = $queryString . $value;
+        };
+        $parentesis = ") (";
+        $parentesisWithComa = "), (";
+        $queryString = (str_replace($parentesis, $parentesisWithComa, $queryString));
+        $query = $this->mysql->prepare($queryString);
+        $query->execute();
     }
 
     public function getHistory($id)
@@ -561,15 +560,12 @@ class Database
 
                 array_push($obj->mainData, $obj->historyData);
             }
-
-
             array_push($response, $obj->historyData);
         }
-
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
-    public function  revertHistory($idHistory, $idUser,$idEvaluador, $puntos, $insinia, $oldValue, $idRanking, $idUserClient)
+    public function  revertHistory($idHistory, $idUser, $idEvaluador, $puntos, $insinia, $oldValue, $idRanking, $idUserClient)
     {
         if ($insinia == 'puntos') {
             $query = $this->mysql->prepare("UPDATE `RankingUser` SET points =  ? WHERE idUser = ? AND idRanking = ?");
@@ -592,7 +588,7 @@ class Database
             $query->execute();
 
             $query = $this->mysql->prepare("UPDATE `RankingUser` SET insiniaPoints = insiniaPoints + ? WHERE idUser = ? AND idRanking = ? ");
-            $query->bind_param('iii', $puntos, $idEvaluador,$idRanking);
+            $query->bind_param('iii', $puntos, $idEvaluador, $idRanking);
             $query->execute();
 
             $query = $this->mysql->prepare("DELETE FROM `historial` WHERE id = ? ");
