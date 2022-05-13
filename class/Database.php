@@ -189,7 +189,7 @@ class Database
             $result2 = $subQuery->get_result();
             $obj->rankingData = [];
 
-          
+
             array_push($response, $obj);
         }
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
@@ -251,14 +251,14 @@ class Database
             $query->execute();
             $result = $query->get_result();
             $row = $result->fetch_assoc();
-            if($row['isEmpty'] == 0){
+            if ($row['isEmpty'] == 0) {
                 return false;
-            }else{
+            } else {
 
-            $query = $this->mysql->prepare("INSERT INTO `RankingUser`(`idRanking`, `idUser`, `points`, `favourite`,`role`) VALUES ((SELECT id from Ranking WHERE joinCode = ? ),?,'0','1','user');");
-            $query->bind_param('si', $code, $idUser);
-            $query->execute();
-            return true;
+                $query = $this->mysql->prepare("INSERT INTO `RankingUser`(`idRanking`, `idUser`, `points`, `favourite`,`role`) VALUES ((SELECT id from Ranking WHERE joinCode = ? ),?,'0','1','user');");
+                $query->bind_param('si', $code, $idUser);
+                $query->execute();
+                return true;
             }
         } catch (Exception $error) {
             return $error;
@@ -283,8 +283,8 @@ class Database
         $isModerator = false;
         $joinCode = "";
         $insiniaPoints = 0;
-        $joinCode="";
-        $isModerator=false;
+        $joinCode = "";
+        $isModerator = false;
 
         while ($row = $result->fetch_assoc()) {
             $obj = new stdClass();
@@ -508,6 +508,7 @@ class Database
         $query = $this->mysql->prepare("DELETE FROM `RankingUser` WHERE  idUser = ? AND idRanking = ?");
         $query->bind_param('ii', $idUser, $idRanking);
         $query->execute();
+        return true;
     }
 
     public function insertUsersToRanking($users, $idRanking)
