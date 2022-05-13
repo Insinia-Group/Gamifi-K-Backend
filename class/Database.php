@@ -293,6 +293,11 @@ class Database
                 $isModerator = true;
                 $joinCode = $row['joinCode'];
             } elseif ($row['role'] == 'moderator') {
+                $rankings = new stdClass();
+                $rankings->insiniaPoints = null;
+                $rankings->joinCode = null;
+                $rankings->moderator = null;
+                $rankings->response = null;
             } else {
                 $insiniaPoints = $row['insiniaPoints'];
 
