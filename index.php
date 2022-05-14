@@ -35,6 +35,7 @@ post('/rankingData', 'get/rankingData.php');
 post('/renewJoinCode', 'post/renewJoinCode.php');
 post('/getRankingUsersById', 'post/getRankingUsersById.php');
 post('/addUsersToRanking', 'post/addUsersToRanking.php');
+post('/sendFile', 'post/sendFile.php');
 
 /* DELETE */
 
