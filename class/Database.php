@@ -652,7 +652,7 @@ class Database
     }
 
 
-    public function sendFile($file,$nameFile,$idRanking,$idUser)
+    public function sendFile($file, $nameFile, $idRanking, $idUser)
     {
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
@@ -660,7 +660,7 @@ class Database
             $nameFile .= $characters[rand(0, $charactersLength - 1)];
         }
         $query = $this->mysql->prepare("INSERT INTO `files`(`path`, `idUser`, `idRanking`) VALUES ('?','?','?')");
-        $query->bind_param('sii', $fileName, $idRanking,$idUser);
+        $query->bind_param('sii', $nameFile, $idRanking, $idUser);
         $query->execute();
     }
 }
