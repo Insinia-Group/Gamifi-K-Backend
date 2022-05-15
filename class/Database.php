@@ -668,7 +668,10 @@ class Database
         // for ($i = 0; $i < 9; $i++) {
         //     $nameFile .= $characters[rand(0, $charactersLength - 1)];
         // }
-
+        $query = $this->mysql->prepare("DELETE FROM `files` WHERE idRanking = ?");
+        $query->bind_param('i', $idRanking);
+        $query->execute();
+        
 
         $query = $this->mysql->prepare("INSERT INTO `files`(`path`, `idRanking`) VALUES (?,?)");
         $query->bind_param('si', $path, $idRanking);
