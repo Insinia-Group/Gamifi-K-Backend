@@ -155,7 +155,6 @@ class Database
     /**
      * getRankingByUser - Genera json con los rankings por usuraio con un sub json que contiene los usuarios con su puntuacion para cada ranking 
      */
-
     public function getRankingsByUser($idUser)
     {
         $query = $this->mysql->prepare("SELECT * FROM `Ranking` WHERE id in (SELECT idRanking from RankingUser WHERE idUser = ?)");
@@ -194,7 +193,6 @@ class Database
         }
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
-
 
     /*
      * Obtenemos los rankings en los que el usuario es moderador
@@ -239,8 +237,8 @@ class Database
         }
         print_r(json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
+
     /**
-  /**
      * addRankingByCode - Añade un ranking al usuario por su codigo unico
      */
     public function addRankingByCode($code, $idUser)
@@ -264,8 +262,6 @@ class Database
             return $error;
         }
     }
-
-
 
     /**
      * getRankingData - Obtiene los datos de cada ranking
