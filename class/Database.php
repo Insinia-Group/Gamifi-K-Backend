@@ -666,7 +666,7 @@ class Database
                 $noRepeat = true;
             }
         }
-
+// sd
 
         $query = $this->mysql->prepare("UPDATE Ranking SET joinCode = '$randomString' WHERE id = ?");
         $query->bind_param('i', $idRanking);
